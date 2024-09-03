@@ -20,29 +20,16 @@ public class PlayerEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String name;
     private LocalDate dateOfBirth;
     private String specialization;
     private String gender;
     private String country;
-
-    @Lob
-    @Column(name = "profile_picture", columnDefinition="LONGBLOB")
-    private byte[] profilePicture;
-
-
+    private String profilePicture;
     private Long teamid;
-
-
-    private boolean playing;
-
-
-
-
-
-
-
+    private boolean Playing;
+    private boolean Overseas;
+    private boolean Backup;
 
 
 }

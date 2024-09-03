@@ -1,14 +1,8 @@
 package com.sam.profilecreation_service.dto;
 
-import com.sam.profilecreation_service.entity.CoachEntity;
-import com.sam.profilecreation_service.entity.TeamEntity;
 import jakarta.persistence.Column;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
 import lombok.*;
-
-import java.util.List;
 
 @Getter
 @Setter
@@ -22,5 +16,6 @@ public class CoachDTO {
     private String country;
 
     @Column(name = "team_id")
+    @JoinColumn(name = "teamId")
     private Long teamId;
 }

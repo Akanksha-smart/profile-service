@@ -18,6 +18,8 @@ public class TeamEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private  String name;
+
+    @Column(unique = true)
     private  String country;
     private String teamCaptain;
 
@@ -29,7 +31,8 @@ public class TeamEntity {
     //
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<PlayerEntity> players;    // total 15 player 5 bowlers, 5 batsmen, 5 all-rounder this is simple
+    private List<PlayerEntity> players;// total 15 player 5 bowlers, 5 batsmen, 5 all-rounder this is simple
+
 
     private int totalPoints;
 

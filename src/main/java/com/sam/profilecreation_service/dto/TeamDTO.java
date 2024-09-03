@@ -30,30 +30,8 @@ public class TeamDTO {
 
     @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Long> playerIds = new ArrayList<>();
+    private List<Long> playingPlayerIds;
     private int totalPoints;
     private byte[] logo;
     private String icon;
-
-
-
-//    public TeamDTO(Long id, Integer coachId ,String name, String country, String teamCaptain, String owner, String icon, int totalPoints, CoachDTO coach, List<PlayerDTO> players) {
-//        this.id = id;
-//        this.coachId = coachId;
-//        this.name = name;
-//        this.country = country;
-//        this.teamCaptain = teamCaptain;
-//        this.owner = owner;
-//        this.icon = icon;
-//        this.totalPoints = totalPoints;
-//
-//    }
-
-//    public Integer getCoachId() {
-//        return coachId;
-//    }
-//
-//    public void setCoachId(Integer coachId) {
-//        this.coachId = coachId;
-//    }
-
 }

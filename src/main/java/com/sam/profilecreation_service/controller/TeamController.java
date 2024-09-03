@@ -2,8 +2,6 @@ package com.sam.profilecreation_service.controller;
 
 import com.sam.profilecreation_service.dto.CoachDTO;
 import com.sam.profilecreation_service.dto.PlayerDTO;
-import com.sam.profilecreation_service.entity.PlayerEntity;
-import com.sam.profilecreation_service.entity.TeamEntity;
 import org.springframework.web.bind.annotation.RestController;
 import com.sam.profilecreation_service.dto.TeamDTO;
 import com.sam.profilecreation_service.service.TeamService;
@@ -24,29 +22,15 @@ public class TeamController {
         @Autowired
         private TeamService teamService;
 
-//    @PostMapping("/create")
-//    public ResponseEntity<TeamDTO> createTeam(@RequestBody TeamDTO teamDTO) {
-////        if (teamDTO.getPlayers() == null) {
-////            teamDTO.setPlayers(new ArrayList<>()); // Initialize players list if null
-////        }
-////
-////        TeamDTO createdTeam = teamService.createTeam(teamDTO);
-////        return new ResponseEntity<>(createdTeam, HttpStatus.CREATED);
-//
-//        TeamEntity teamEntity = convertToTeamEntity(teamDTO);
-//
-//        // Fetch existing players from the database
-//        List<PlayerEntity> existingPlayers = playerRepository.findAllById(teamDTO.getPlayerIds());
-//
-//        // Set the fetched players to the team
-//        teamEntity.setPlayers(existingPlayers);
-//
-//        // Save the team entity
-//        TeamEntity savedTeamEntity = teamRepository.save(teamEntity);
-//
-//        // Convert Entity back to DTO
-//        return convertToTeamDTO(savedTeamEntity);
-//    }
+    @PostMapping("/create")
+    public ResponseEntity<TeamDTO> createTeam(@RequestBody TeamDTO teamDTO) {
+//        if (teamDTO.getPlayers() == null) {
+//            teamDTO.setPlayers(new ArrayList<>()); // Initialize players list if null
+//        }
+
+        TeamDTO createdTeam = teamService.createTeam(teamDTO);
+        return new ResponseEntity<>(createdTeam, HttpStatus.CREATED);
+    }
 
         @GetMapping("/{id}")
         public ResponseEntity<TeamDTO> getTeamById(@PathVariable Long id) {

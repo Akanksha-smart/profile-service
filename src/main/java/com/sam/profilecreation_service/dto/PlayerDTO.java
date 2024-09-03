@@ -27,10 +27,11 @@ public class PlayerDTO {
 
     private Long teamId;
 
-    private byte[] profilePicture;
+    private String profilePicture;
 
-    private static boolean overseas;
-    private boolean playing;
+    private boolean isPlaying;
+    private boolean isOverseas;
+    private boolean isBackup;
 
 
 

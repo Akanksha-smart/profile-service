@@ -1,11 +1,9 @@
 package com.sam.profilecreation_service.entity;
 
 
-import com.sam.profilecreation_service.dto.CoachDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
 
 @Entity
 @Table(name = "coach")

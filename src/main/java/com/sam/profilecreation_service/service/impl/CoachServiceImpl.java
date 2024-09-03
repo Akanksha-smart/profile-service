@@ -24,8 +24,6 @@ public class CoachServiceImpl implements CoachService {
         coachDTO.setCoachId(coachEntity.getCoachId());
         coachDTO.setCoachName(coachEntity.getCoachName());
         coachDTO.setCountry(coachEntity.getCountry());
-        //coachDTO.setTeamId(coachEntity.getTeamId());
-
         coachDTO.setTeamId(coachEntity.getTeamId());
         return coachDTO;
     }
