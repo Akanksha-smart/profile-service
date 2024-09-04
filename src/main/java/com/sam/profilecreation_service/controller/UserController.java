@@ -29,11 +29,11 @@ public class UserController {
             UserEntity registeredUser = userService.signup(userEntity);
             System.out.println("After"+userEntity.toString());
 //            return new ResponseEntity<>(registeredUser, HttpStatus.OK);
-            return "Created";
+            return "User signed in successfully";
         } catch (Exception e) {
             System.out.println(userEntity.toString());
 //            return new ResponseEntity<>(null);
-            return "Error";
+            return e.getMessage();
         }
     }
 
