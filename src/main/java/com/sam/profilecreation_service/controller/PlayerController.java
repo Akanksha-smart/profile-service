@@ -1,7 +1,7 @@
 package com.sam.profilecreation_service.controller;
 
+import com.sam.profilecreation_service.entity.PlayerEntity;
 import org.springframework.web.bind.annotation.RestController;
-import com.sam.profilecreation_service.dto.PlayerDTO;
 import com.sam.profilecreation_service.service.PlayerService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,16 +19,16 @@ public class PlayerController {
     private PlayerService playerService;
 
     @PostMapping("/create")
-    public ResponseEntity<PlayerDTO> createPlayer(@RequestBody PlayerDTO playerDTO) {
-        PlayerDTO createdPlayer = playerService.createPlayer(playerDTO);
+    public ResponseEntity<PlayerEntity> createPlayer(@RequestBody PlayerEntity playerDTO) {
+        PlayerEntity createdPlayer = playerService.createPlayer(playerDTO);
         return new ResponseEntity<>(createdPlayer, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PlayerDTO> getPlayerById(@PathVariable Long id) {
+    public ResponseEntity<PlayerEntity> getPlayerById(@PathVariable Long id) {
         try {
-            PlayerDTO playerDTO = playerService.getPlayerById(id);
-            return new ResponseEntity<>(playerDTO, HttpStatus.OK);
+            PlayerEntity PlayerEntity= playerService.getPlayerById(id);
+            return new ResponseEntity<>( PlayerEntity, HttpStatus.OK);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -36,15 +36,15 @@ public class PlayerController {
 
 
     @GetMapping
-    public ResponseEntity<List<PlayerDTO>> getAllPlayers() {
-        List<PlayerDTO> players = playerService.getAllPlayers();
+    public ResponseEntity<List<PlayerEntity>> getAllPlayers() {
+        List<PlayerEntity> players = playerService.getAllPlayers();
         return new ResponseEntity<>(players, HttpStatus.OK);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<PlayerDTO> updatePlayer(@RequestBody PlayerDTO playerDTO, @PathVariable Long id) {
+    public ResponseEntity<PlayerEntity> updatePlayer(@RequestBody PlayerEntity playerDTO, @PathVariable Long id) {
         try {
-            PlayerDTO updatedPlayer = playerService.updatePlayer(playerDTO, id);
+            PlayerEntity updatedPlayer = playerService.updatePlayer(playerDTO, id);
             return new ResponseEntity<>(updatedPlayer, HttpStatus.OK);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -63,7 +63,7 @@ public class PlayerController {
     }
 
     @GetMapping("/country/{country}")
-    public List<PlayerDTO> getPlayersByCountry(@PathVariable String country) {
+    public List<PlayerEntity> getPlayersByCountry(@PathVariable String country) {
         return playerService.getPlayersByCountry(country);
     }
 

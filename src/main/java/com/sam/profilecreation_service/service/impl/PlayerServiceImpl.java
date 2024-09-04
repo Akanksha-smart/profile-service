@@ -1,6 +1,5 @@
 package com.sam.profilecreation_service.service.impl;
 
-import com.sam.profilecreation_service.dto.PlayerDTO;
 import com.sam.profilecreation_service.entity.PlayerEntity;
 import com.sam.profilecreation_service.repository.PlayerRepository;
 import com.sam.profilecreation_service.service.PlayerService;
@@ -20,65 +19,28 @@ public class PlayerServiceImpl implements PlayerService {
 
 
     @Override
-    public PlayerEntity convertToPlayerEntity(PlayerDTO playerDTO) {
-        PlayerEntity playerEntity = new PlayerEntity();
-        playerEntity.setId(playerDTO.getId());
-        playerEntity.setName(playerDTO.getName());
-        playerEntity.setDateOfBirth(playerDTO.getDateOfBirth());
-        playerEntity.setSpecialization(playerDTO.getSpecialization());
-        playerEntity.setGender(playerDTO.getGender());
-        playerEntity.setCountry(playerDTO.getCountry());
-      playerEntity.setTeamid(playerDTO.getTeamId());
-      playerEntity.setProfilePicture(playerDTO.getProfilePicture());
-        return playerEntity;
+    public PlayerEntity createPlayer(PlayerEntity playerDTO) {
+        return playerRepository.save(playerDTO);
+
     }
 
     @Override
-    public PlayerDTO convertToPlayerDTO(PlayerEntity playerEntity) {
-        return new PlayerDTO(
-                playerEntity.getId(),
-                playerEntity.getName(),
-                playerEntity.getDateOfBirth(),
-                playerEntity.getSpecialization(),
-                playerEntity.getGender(),
-                playerEntity.getCountry(),
-                playerEntity.getTeamid(),
-                playerEntity.getProfilePicture(),
-                playerEntity.isPlaying(),
-                playerEntity.isOverseas(),
-                playerEntity.isBackup()
-        );
-    }
-
-    @Override
-    public PlayerDTO createPlayer(PlayerDTO playerDTO) {
-        PlayerEntity playerEntity = convertToPlayerEntity(playerDTO);
-        PlayerEntity savedPlayerEntity = playerRepository.save(playerEntity);
-        return convertToPlayerDTO(savedPlayerEntity);
-    }
-
-    @Override
-    public PlayerDTO getPlayerById(Long id) {
+    public PlayerEntity getPlayerById(Long id) {
         Optional<PlayerEntity> playerOpt = playerRepository.findById(id);
         if (playerOpt.isPresent()) {
-            return convertToPlayerDTO(playerOpt.get());
+            return playerOpt.get();
         } else {
             throw new EntityNotFoundException("Player not found with id: " + id);
         }
     }
 
     @Override
-    public List<PlayerDTO> getAllPlayers() {
-        List<PlayerEntity> playerEntities = playerRepository.findAll();
-
-
-        return playerEntities.stream()
-                .map(this::convertToPlayerDTO)
-                .collect(Collectors.toList());
+    public List<PlayerEntity> getAllPlayers() {
+       return playerRepository.findAll();
     }
 
     @Override
-    public PlayerDTO updatePlayer(PlayerDTO playerDTO, Long id) {
+    public PlayerEntity updatePlayer(PlayerEntity playerDTO, Long id) {
 
         PlayerEntity playerEntity = playerRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Player not found with id: " + id));
@@ -89,10 +51,10 @@ public class PlayerServiceImpl implements PlayerService {
         playerEntity.setDateOfBirth(playerDTO.getDateOfBirth());
         playerEntity.setSpecialization(playerDTO.getSpecialization());
         playerEntity.setProfilePicture(playerDTO.getProfilePicture());
-         playerEntity.setTeamid(playerDTO.getTeamId());
+         //playerEntity.setTeamid(playerDTO.getTeamId());
         playerRepository.save(playerEntity);
 
-        return convertToPlayerDTO(playerEntity);
+        return playerEntity;
     }
 
     @Override
@@ -106,11 +68,9 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-    public List<PlayerDTO> getPlayersByCountry(String country) {
-            List<PlayerEntity> playerEntities = playerRepository.findByCountry(country);
-            return playerEntities.stream()
-                    .map(this::convertToPlayerDTO)
-                    .collect(Collectors.toList());
+    public List<PlayerEntity> getPlayersByCountry(String country) {
+        return  playerRepository.findByCountry(country);
+
         }
 
 }

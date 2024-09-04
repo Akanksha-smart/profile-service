@@ -1,7 +1,5 @@
 package com.sam.profilecreation_service.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.sam.profilecreation_service.dto.PlayerDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,15 +19,20 @@ public class PlayerEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    private String email;
+    private String username;
     private LocalDate dateOfBirth;
     private String specialization;
     private String gender;
     private String country;
     private String profilePicture;
+    private ERole role;
     private Long teamid;
+    @Column(name = "is_playing")
     private boolean Playing;
+    @Column(name = "is_overseas")
     private boolean Overseas;
-    private boolean Backup;
-
+    @Column(name = "is_backup")
+    private boolean is_backup;
 
 }

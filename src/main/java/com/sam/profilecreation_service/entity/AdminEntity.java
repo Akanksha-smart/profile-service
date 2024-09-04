@@ -1,35 +1,31 @@
 package com.sam.profilecreation_service.entity;
 
-
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
-
 @Entity
-@Table(name = "coach")
-@Getter
-@Setter
-@ToString
+@Table(name = "admin")
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CoachEntity{
+public class AdminEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long coachId;
+    private Long id;
+
+    private String username;
+    private String email;
+    private String password;
+    private ERole role;
     private String name;
     private String country;
     private String gender;
     private LocalDate dateOfBirth;
     private String profilePicture;
-    private String specialization;
-    private String username;
-    private ERole role;
-    private String email;
-
-    @Column(name = "team_id")
-    private Long teamId;
-
 
 }

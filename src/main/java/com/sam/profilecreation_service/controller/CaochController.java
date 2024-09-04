@@ -1,13 +1,13 @@
 package com.sam.profilecreation_service.controller;
 
 import org.springframework.web.bind.annotation.RestController;
-import com.sam.profilecreation_service.dto.CoachDTO;
 import com.sam.profilecreation_service.service.CoachService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.sam.profilecreation_service.entity.CoachEntity;
 
 import java.util.List;
 
@@ -20,31 +20,31 @@ public class CaochController {
     private CoachService coachService;
 
     @PostMapping("/create")
-    public ResponseEntity<CoachDTO> createCoach(@RequestBody CoachDTO coachDTO) {
-        CoachDTO createdCoach = coachService.createCoach(coachDTO);
+    public ResponseEntity<CoachEntity> createCoach(@RequestBody CoachEntity CoachEntity) {
+        CoachEntity createdCoach = coachService.createCoach(CoachEntity);
         return new ResponseEntity<>(createdCoach, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CoachDTO> findCoachById(@PathVariable Long id) {
+    public ResponseEntity<CoachEntity> findCoachById(@PathVariable Long id) {
         try {
-            CoachDTO coachDTO = coachService.findCoachById(Math.toIntExact(id));
-            return new ResponseEntity<>(coachDTO, HttpStatus.OK);
+            CoachEntity CoachEntity = coachService.findCoachById(Math.toIntExact(id));
+            return new ResponseEntity<>(CoachEntity, HttpStatus.OK);
         } catch (EntityNotFoundException ex) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }
 
     @GetMapping
-    public ResponseEntity<List<CoachDTO>> findAllCoaches() {
-        List<CoachDTO> coaches = coachService.findAllCoaches();
+    public ResponseEntity<List<CoachEntity>> findAllCoaches() {
+        List<CoachEntity> coaches = coachService.findAllCoaches();
         return new ResponseEntity<>(coaches, HttpStatus.OK);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<CoachDTO> updateCoach(@RequestBody CoachDTO coachDTO, @PathVariable Long id) {
+    public ResponseEntity<CoachEntity> updateCoach(@RequestBody CoachEntity CoachEntity, @PathVariable Long id) {
         try {
-            CoachDTO updatedCoach = coachService.updateCoach(coachDTO, id);
+            CoachEntity updatedCoach = coachService.updateCoach(CoachEntity, id);
             return new ResponseEntity<>(updatedCoach, HttpStatus.OK);
         } catch (EntityNotFoundException ex) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);

@@ -1,26 +1,23 @@
 package com.sam.profilecreation_service.service;
 
-import com.sam.profilecreation_service.dto.PlayerDTO;
+
 import com.sam.profilecreation_service.entity.PlayerEntity;
 
 import java.util.List;
 
 public interface PlayerService {
-    PlayerEntity convertToPlayerEntity(PlayerDTO playerDTO);
 
-    PlayerDTO convertToPlayerDTO(PlayerEntity playerEntity);
+    PlayerEntity createPlayer(PlayerEntity playerDTO);
 
-    PlayerDTO createPlayer(PlayerDTO playerDTO);
+    PlayerEntity getPlayerById(Long id);
+    List<PlayerEntity> getAllPlayers();
 
-    PlayerDTO getPlayerById(Long id);
-    List<PlayerDTO> getAllPlayers();
-
-    PlayerDTO updatePlayer(PlayerDTO player, Long id);
+    PlayerEntity updatePlayer(PlayerEntity player, Long id);
 
     void deletePlayer(Long id);
 
 
 
-    List<PlayerDTO> getPlayersByCountry(String country);
+    List<PlayerEntity> getPlayersByCountry(String country);
 
 }
