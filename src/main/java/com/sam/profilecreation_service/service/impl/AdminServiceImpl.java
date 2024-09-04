@@ -18,6 +18,7 @@ public class AdminServiceImpl implements AdminService
 
     @Override
     public List<AdminEntity> getAllAdmin (){
+        System.out.println("testing this");
         return adminRepository.findAll();
     }
 }
