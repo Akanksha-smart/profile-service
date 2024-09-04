@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -20,31 +21,66 @@ public class UserController {
     @Autowired
     private UserServiceImpl userService;
 
+//    @PostMapping("/register")
+//    public String registerUser(@RequestBody UserEntity userEntity ) {
+//        try {
+//            System.out.println("In post"+userEntity.toString());
+//            UserEntity registeredUser = userService.signup(userEntity);
+//            System.out.println("After"+userEntity.toString());
+////            return new ResponseEntity<>(registeredUser, HttpStatus.OK);
+//            return "User signed in successfully";
+//        } catch (Exception e) {
+//            System.out.println(userEntity.toString());
+////            return new ResponseEntity<>(null);
+//            return e.getMessage();
+//        }
+//    }
+
     @PostMapping("/register")
-    public String registerUser(@RequestBody UserEntity userEntity ) {
+    public ResponseEntity<Map<String, String>> registerUser(@RequestBody UserEntity userEntity) {
+        Map<String, String> response = new HashMap<>();
         try {
-            System.out.println("In post"+userEntity.toString());
+            System.out.println("In post" + userEntity.toString());
             UserEntity registeredUser = userService.signup(userEntity);
-            System.out.println("After"+userEntity.toString());
-//            return new ResponseEntity<>(registeredUser, HttpStatus.OK);
-            return "User signed in successfully";
+            System.out.println("After" + userEntity.toString());
+
+            response.put("message", "User signed up successfully");
+            return ResponseEntity.status(HttpStatus.OK).body(response);
         } catch (Exception e) {
             System.out.println(userEntity.toString());
-//            return new ResponseEntity<>(null);
-            return e.getMessage();
+
+            response.put("message", "Error during signup: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
 
+//    @PostMapping("/login")
+//    public ResponseEntity<UserEntity> loginUser(@RequestBody Map<String, String> loginRequest) {
+//        try {
+//            String username = loginRequest.get("username");
+//            String password = loginRequest.get("password");
+//
+//            UserEntity loggedInUser = userService.login(username, password);
+//            return new ResponseEntity<>(loggedInUser, HttpStatus.OK);
+//        } catch (Exception e) {
+//            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+//        }
+//    }
+
     @PostMapping("/login")
-    public ResponseEntity<UserEntity> loginUser(@RequestBody Map<String, String> loginRequest) {
+    public ResponseEntity<Map<String, Object>> loginUser(@RequestBody Map<String, String> loginRequest) {
+        Map<String, Object> response = new HashMap<>();
         try {
             String username = loginRequest.get("username");
             String password = loginRequest.get("password");
 
             UserEntity loggedInUser = userService.login(username, password);
-            return new ResponseEntity<>(loggedInUser, HttpStatus.OK);
+            response.put("user", loggedInUser);
+            response.put("message", "Login successful");
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+            response.put("message", "Invalid credentials");
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
     }
 }
