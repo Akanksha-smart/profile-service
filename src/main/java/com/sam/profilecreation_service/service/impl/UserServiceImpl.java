@@ -9,7 +9,6 @@ import com.sam.profilecreation_service.service.AdminService;
 import com.sam.profilecreation_service.service.CoachService;
 import com.sam.profilecreation_service.service.PlayerService;
 import com.sam.profilecreation_service.service.UserService;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -66,7 +65,6 @@ public class UserServiceImpl implements UserService {
                 admin.setProfilePicture(userEntity.getProfilePicture());
                 admin.setCountry(userEntity.getCountry());
                 adminRepository.save(admin);
-
                 break;
 
             case PLAYER:
@@ -85,7 +83,6 @@ public class UserServiceImpl implements UserService {
                 player.set_backup(false);
                 player.setPlaying(false);
                 playerRepository.save(player);
-
                 break;
 
             case COACH:
@@ -100,7 +97,6 @@ public class UserServiceImpl implements UserService {
                 coach.setCountry(userEntity.getCountry());
                 coach.setSpecialization(userEntity.getSpecialization());
                 coachRepository.save(coach);
-
                 break;
 
             default:
