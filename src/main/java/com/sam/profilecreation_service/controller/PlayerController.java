@@ -13,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/players")
+@CrossOrigin("http://localhost:3000")
 public class PlayerController {
 
     @Autowired
@@ -35,7 +36,7 @@ public class PlayerController {
     }
 
 
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<PlayerEntity>> getAllPlayers() {
         List<PlayerEntity> players = playerService.getAllPlayers();
         return new ResponseEntity<>(players, HttpStatus.OK);
