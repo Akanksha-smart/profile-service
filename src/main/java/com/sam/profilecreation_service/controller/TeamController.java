@@ -1,5 +1,6 @@
 package com.sam.profilecreation_service.controller;
 
+import com.sam.profilecreation_service.dto.TeamRegisterDTO;
 import com.sam.profilecreation_service.entity.TeamEntity;
 import com.sam.profilecreation_service.entity.PlayerEntity;
 import com.sam.profilecreation_service.entity.CoachEntity;
@@ -32,21 +33,33 @@ public class TeamController {
 //        }
 //    }
 
+//    @PostMapping("/create")
+//    public ResponseEntity<String> createTeam(@RequestBody TeamEntity teamEntity) {
+//        List<PlayerEntity> players = teamEntity.getPlayers();
+//
+//        if (teamService.validateTeamCreation(players)) {
+//            // Set the team for each player
+//            players.forEach(player -> player.setTeamEntity(teamEntity));
+//
+//            // Save the team entity, which will also save the associated players
+//            teamService.saveTeam(teamEntity);
+//            return ResponseEntity.ok("Team created successfully!");
+//        } else {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid team data.");
+//        }
+//
+//    }
+
+
+
     @PostMapping("/create")
-    public ResponseEntity<String> createTeam(@RequestBody TeamEntity teamEntity) {
-        List<PlayerEntity> players = teamEntity.getPlayers();
-
-        if (teamService.validateTeamCreation(players)) {
-            // Set the team for each player
-            players.forEach(player -> player.setTeamEntity(teamEntity));
-
-            // Save the team entity, which will also save the associated players
-            teamService.saveTeam(teamEntity);
-            return ResponseEntity.ok("Team created successfully!");
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid team data.");
+    public ResponseEntity<?> createTeam(@RequestBody TeamRegisterDTO teamRegisterDTO) {
+        try {
+            TeamEntity team = teamService.createTeam(teamRegisterDTO);
+            return ResponseEntity.ok(team);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-
     }
 
     @GetMapping("/{id}")

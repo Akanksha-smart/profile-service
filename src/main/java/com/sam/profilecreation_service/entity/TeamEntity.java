@@ -27,6 +27,8 @@ public class TeamEntity {
     @Column(name = "coach_id")
     private Long coachId;
 
+
+    private String coachName;
     private String owner;
 
     //
