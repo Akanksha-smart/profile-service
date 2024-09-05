@@ -1,6 +1,7 @@
 package com.sam.profilecreation_service.service;
 
 
+import com.sam.profilecreation_service.dto.TeamRegisterDTO;
 import com.sam.profilecreation_service.entity.PlayerEntity;
 import com.sam.profilecreation_service.entity.TeamEntity;
 import jakarta.transaction.Transactional;
@@ -10,13 +11,15 @@ import java.util.List;
 public interface TeamService {
 
     @Transactional
-    TeamEntity createTeam(TeamEntity teamEntity);
+    TeamEntity createTeam(TeamRegisterDTO teamRegisterDTO) throws Exception;
 
-     boolean validateTeamCreation(List<PlayerEntity> players);
+//     boolean validateTeamCreation(List<PlayerEntity> players);
+//
+//    TeamEntity getTeamById(Long id);
+//
+//    void saveTeam(TeamEntity teamEntity);
 
     TeamEntity getTeamById(Long id);
-
-    void saveTeam(TeamEntity teamEntity);
 
     List<TeamEntity> getAllTeams();
 

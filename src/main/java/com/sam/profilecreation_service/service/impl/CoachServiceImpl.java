@@ -19,15 +19,13 @@ public class CoachServiceImpl implements CoachService {
 
     @Override
     public CoachEntity createCoach(CoachEntity coachEntity) {
-       CoachEntity coachEntity1 =  coachRepository.save(coachEntity);
-        return coachEntity1;
+        return coachRepository.save(coachEntity);
     }
 
     @Override
     public CoachEntity findCoachById(Long id) {
-        CoachEntity coachEntity = coachRepository.findById(id)
+        return coachRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Coach not found with id: " + id));
-        return coachEntity;
     }
 
     @Override

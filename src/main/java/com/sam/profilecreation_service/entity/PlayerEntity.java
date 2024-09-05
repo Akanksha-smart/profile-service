@@ -34,10 +34,13 @@ public class PlayerEntity {
     private TeamEntity teamEntity;
 
     private Long teamid;
+
     @Column(name = "is_playing")
     private boolean isPlaying;
+
     @Column(name = "is_overseas")
     private boolean isOverseas;
+
     @Column(name = "is_backup")
     private boolean isBackup;
 

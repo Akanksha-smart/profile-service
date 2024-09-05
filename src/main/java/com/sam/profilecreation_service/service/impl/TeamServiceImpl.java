@@ -1,13 +1,15 @@
 package com.sam.profilecreation_service.service.impl;
 
-import com.sam.profilecreation_service.entity.CoachEntity;
+import com.sam.profilecreation_service.dto.PlayerDTO;
+import com.sam.profilecreation_service.dto.TeamRegisterDTO;
+import com.sam.profilecreation_service.entity.ERole;
 import com.sam.profilecreation_service.entity.PlayerEntity;
 import com.sam.profilecreation_service.entity.TeamEntity;
-import com.sam.profilecreation_service.repository.CoachRepository;
 import com.sam.profilecreation_service.repository.PlayerRepository;
 import com.sam.profilecreation_service.repository.TeamRepository;
 import com.sam.profilecreation_service.service.TeamService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,51 +26,115 @@ public class TeamServiceImpl implements TeamService {
     @Autowired
     private PlayerRepository playerRepository;
 
-    @Override
-    public TeamEntity createTeam(TeamEntity teamEntity) {
-        // Validate the team entity for the required number of players
-        validateTeamEntity(teamEntity);
+    @Transactional
+    public TeamEntity createTeam(TeamRegisterDTO teamRegisterDTO) throws Exception {
+        // Convert PlayerDTOs to Player entities
+        List<PlayerEntity> players = convertPlayerDTOsToEntities(teamRegisterDTO.getPlayers());
 
-        // Ensure players exist in the database and are available for assignment
-        List<PlayerEntity> players = fetchExistingPlayers(teamEntity.getPlayers());
+        // Validate players according to the rules
+        validatePlayers(players, teamRegisterDTO.getCountry());
 
-        // Assign the players to the team
-        teamEntity.setPlayers(players);
+        // Create a new Team entity and populate it with DTO data
+        TeamEntity team = new TeamEntity();
+        team.setName(teamRegisterDTO.getName());
+        team.setCountry(teamRegisterDTO.getCountry());
+        team.setTeamCaptain(teamRegisterDTO.getTeamCaptain());
+        team.setCoachName(teamRegisterDTO.getCoach());
+        team.setOwner(teamRegisterDTO.getOwner());
+        team.setIcon(teamRegisterDTO.getIcon());
+        team.setTotalPoints(teamRegisterDTO.getTotalPoints());
+        team.setPlayers(players); // Set the list of players
 
-        return teamRepository.save(teamEntity);
+        // Save or update players
+        List<PlayerEntity> managedPlayers = saveOrUpdatePlayers(players);
+
+        // Associate managed players with the team
+        team.setPlayers(managedPlayers);
+
+        // Save the team
+        return teamRepository.save(team);
     }
 
+    private List<PlayerEntity> saveOrUpdatePlayers(List<PlayerEntity> players) {
+        List<PlayerEntity> managedPlayers = new ArrayList<>();
+        for (PlayerEntity player : players) {
+            if (player.getId() != null) {
+                // If player ID exists, it is a detached entity, so we merge it
+                PlayerEntity managedPlayer = playerRepository.findById(player.getId()).orElse(null);
+                if (managedPlayer != null) {
+                    // Update existing managed player
+                    managedPlayer.setName(player.getName());
+                    managedPlayer.setEmail(player.getEmail());
+                    managedPlayer.setUsername(player.getUsername());
+                    managedPlayer.setDateOfBirth(player.getDateOfBirth());
+                    managedPlayer.setSpecialization(player.getSpecialization());
+                    managedPlayer.setGender(player.getGender());
+                    managedPlayer.setCountry(player.getCountry());
+                    managedPlayer.setProfilePicture(player.getProfilePicture());
+                    managedPlayer.setRole(player.getRole());
+                    managedPlayer.setPlaying(player.isPlaying());
+                    managedPlayer.setOverseas(player.isOverseas());
+                    managedPlayer.setBackup(player.isBackup());
+                    managedPlayers.add(playerRepository.save(managedPlayer)); // Save the updated player
+                } else {
+                    // Handle case where player with ID does not exist
+                    managedPlayers.add(playerRepository.save(player));
+                }
+            } else {
+                // New player, so we persist
+                managedPlayers.add(playerRepository.save(player));
+            }
+        }
+        return managedPlayers;
+    }
 
-    public boolean validateTeamCreation(List<PlayerEntity> players) {
+    private List<PlayerEntity> convertPlayerDTOsToEntities(List<PlayerDTO> playerDTOs) throws Exception {
+        List<PlayerEntity> players = new ArrayList<>();
+        for (PlayerDTO dto : playerDTOs) {
+            PlayerEntity player = new PlayerEntity();
+            player.setId(dto.getId()); // Set the ID which is used for detecting if it's a detached entity
+            player.setName(dto.getName());
+            player.setEmail(dto.getEmail());
+            player.setUsername(dto.getUsername());
+            player.setDateOfBirth(dto.getDateOfBirth());
+            player.setSpecialization(dto.getSpecialization());
+            player.setGender(dto.getGender());
+            player.setCountry(dto.getCountry());
+            player.setProfilePicture(dto.getProfilePicture());
+            player.setRole(ERole.valueOf(dto.getRole()));
+            player.setPlaying(dto.getPlaying());
+            player.setOverseas(dto.getOverseas());
+            player.setBackup(dto.getBackup());
+            players.add(player);
+        }
+        return players;
+    }
+
+    private void validatePlayers(List<PlayerEntity> players, String teamCountry) throws Exception {
         if (players.size() != 15) {
-            return false; // Team must have exactly 15 players
+            throw new Exception("A team must consist of exactly 15 players.");
         }
 
-        // Count players by specialization
-        Map<String, Long> specializationCounts = players.stream()
-                .collect(Collectors.groupingBy(PlayerEntity::getSpecialization, Collectors.counting()));
+        // Count specializations
+        long bowlers = players.stream().filter(p -> "Bowler".equals(p.getSpecialization())).count();
+        long batters = players.stream().filter(p -> "Batter".equals(p.getSpecialization())).count();
+        long allRounders = players.stream().filter(p -> "All-Rounder".equals(p.getSpecialization())).count();
 
-        // Check specialization constraints
-//        if (specializationCounts.getOrDefault("Batter", 0L) != 5 ||
-//                specializationCounts.getOrDefault("Bowler", 0L) != 5 ||
-//                specializationCounts.getOrDefault("All-Rounder", 0L) != 5) {
-//            return false;
-//        }
+        if (bowlers != 5 || batters != 5 || allRounders != 5) {
+            throw new Exception("Team must have 5 Bowlers, 5 Batters, and 5 All-Rounders.");
+        }
 
-        // Count overseas, playing, and backup players
-//        long overseasCount = players.stream().filter(PlayerEntity::isOverseas).count();
-//        long playingCount = players.stream().filter(PlayerEntity::isPlaying).count();
-//        long backupCount = players.stream().filter(PlayerEntity::isBackup).count();
+        // Check country rules
+        long sameCountryCount = players.stream().filter(p -> teamCountry.equals(p.getCountry())).count();
+        if (sameCountryCount < 10) {
+            throw new Exception("The team must have at least 10 players from the same country as the team's country.");
+        }
 
-        // Check overseas, playing, and backup constraints
-//        if (overseasCount != 5 || playingCount != 11 || backupCount != 4) {
-//            return false;
-//        }
-
-        return true;
-    }
-    public void saveTeam(TeamEntity teamEntity) {
-       teamRepository.save(teamEntity);
+        // Ensure 5 players from other countries
+        long otherCountriesCount = players.size() - sameCountryCount;
+        if (otherCountriesCount < 5) {
+            throw new Exception("The team must have at least 5 players from countries other than the team's country.");
+        }
     }
 
     @Override
