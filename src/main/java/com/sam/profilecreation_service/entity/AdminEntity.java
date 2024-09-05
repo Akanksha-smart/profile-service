@@ -21,6 +21,8 @@ public class AdminEntity {
     private String username;
     private String email;
     private String password;
+
+    @Enumerated(EnumType.STRING)
     private ERole role;
     private String name;
     private String country;

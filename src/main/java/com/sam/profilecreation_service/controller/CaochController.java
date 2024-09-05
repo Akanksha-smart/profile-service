@@ -29,7 +29,7 @@ public class CaochController {
     @GetMapping("/{id}")
     public ResponseEntity<CoachEntity> findCoachById(@PathVariable Long id) {
         try {
-            CoachEntity CoachEntity = coachService.findCoachById(Math.toIntExact(id));
+            CoachEntity CoachEntity = coachService.findCoachById(id);
             return new ResponseEntity<>(CoachEntity, HttpStatus.OK);
         } catch (EntityNotFoundException ex) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);

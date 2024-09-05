@@ -6,179 +6,172 @@ import com.sam.profilecreation_service.entity.TeamEntity;
 import com.sam.profilecreation_service.repository.CoachRepository;
 import com.sam.profilecreation_service.repository.PlayerRepository;
 import com.sam.profilecreation_service.repository.TeamRepository;
-import com.sam.profilecreation_service.service.CoachService;
-import com.sam.profilecreation_service.service.PlayerService;
 import com.sam.profilecreation_service.service.TeamService;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+
 @Service
 public class TeamServiceImpl implements TeamService {
 
+    @Autowired
+    private TeamRepository teamRepository;
 
-//    @Transactional
-//    public TeamEntity createTeam(TeamEntity TeamEntity) {
-//         validateTeamEntity(TeamEntity);
-//
-//        List<PlayerEntity> existingPlayers = fetchExistingPlayers(TeamEntity.getPlayerIds());
-//        teamEntity.setPlayers(existingPlayers);
-//        assignPlayingAndBackupRoles(existingPlayers, TeamEntity.getPlayingPlayerIds());
-//        TeamEntity savedTeamEntity = teamRepository.save(teamEntity);
-//        return convertToTeamEntity(savedTeamEntity);
-//    }
-//
-//
-//
-//    @Override
-//    public TeamEntity getTeamById(Long id) {
-//        TeamEntity teamEntity = teamRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Team not found with id: " + id));
-//        return convertToTeamEntity(teamEntity);
-//    }
-//
-//    @Override
-//    public List<TeamEntity> getAllTeams() {
-//        List<TeamEntity> teamEntities = teamRepository.findAll();
-//        return teamEntities.stream()
-//                .map(this::convertToTeamEntity)
-//                .collect(Collectors.toList());
-//    }
-//
-//    @Override
-//    public TeamEntity updateTeam(TeamEntity TeamEntity, Long id) {
-//        TeamEntity teamEntity = teamRepository.findById(id)
-//                .orElseThrow(() -> new EntityNotFoundException("Team not found with id: " + id));
-//
-//        teamEntity.setName(TeamEntity.getName());
-//        teamEntity.setCountry(TeamEntity.getCountry());
-//        teamEntity.setTeamCaptain(TeamEntity.getTeamCaptain());
-//        teamEntity.setOwner(TeamEntity.getOwner());
-//        teamEntity.setIcon(TeamEntity.getIcon());
-//        teamEntity.setTotalPoints(TeamEntity.getTotalPoints());
-//        teamEntity.setLogo(TeamEntity.getLogo()); // Uncomment this line if you want to update the logo
-//
-//        if (TeamEntity.getCoachId() != null) {
-//            teamEntity.setCoachId(TeamEntity.getCoachId());
+    @Autowired
+    private PlayerRepository playerRepository;
+
+    @Override
+    public TeamEntity createTeam(TeamEntity teamEntity) {
+        // Validate the team entity for the required number of players
+        validateTeamEntity(teamEntity);
+
+        // Ensure players exist in the database and are available for assignment
+        List<PlayerEntity> players = fetchExistingPlayers(teamEntity.getPlayers());
+
+        // Assign the players to the team
+        teamEntity.setPlayers(players);
+
+        return teamRepository.save(teamEntity);
+    }
+
+
+    public boolean validateTeamCreation(List<PlayerEntity> players) {
+        if (players.size() != 15) {
+            return false; // Team must have exactly 15 players
+        }
+
+        // Count players by specialization
+        Map<String, Long> specializationCounts = players.stream()
+                .collect(Collectors.groupingBy(PlayerEntity::getSpecialization, Collectors.counting()));
+
+        // Check specialization constraints
+//        if (specializationCounts.getOrDefault("Batter", 0L) != 5 ||
+//                specializationCounts.getOrDefault("Bowler", 0L) != 5 ||
+//                specializationCounts.getOrDefault("All-Rounder", 0L) != 5) {
+//            return false;
 //        }
-//        List<Long> playerIds = teamEntity.getPlayers().stream()
-//                .map(PlayerEntity::getId)
-//                .collect(Collectors.toList());
-//        TeamEntity.setPlayerIds(playerIds);
-//
-//        TeamEntity updatedTeamEntity = teamRepository.save(teamEntity);
-//        return convertToTeamEntity(updatedTeamEntity);
-//    }
-//
-//
-//
-//    @Override
-//    public void deleteTeam(Long id) {
-//
-//        Optional<TeamEntity> teamEntityOptional = teamRepository.findById(id);
-//        if (teamEntityOptional.isPresent()) {
-//            teamRepository.delete(teamEntityOptional.get());
+
+        // Count overseas, playing, and backup players
+//        long overseasCount = players.stream().filter(PlayerEntity::isOverseas).count();
+//        long playingCount = players.stream().filter(PlayerEntity::isPlaying).count();
+//        long backupCount = players.stream().filter(PlayerEntity::isBackup).count();
+
+        // Check overseas, playing, and backup constraints
+//        if (overseasCount != 5 || playingCount != 11 || backupCount != 4) {
+//            return false;
 //        }
-//        else
-//            throw new EntityNotFoundException("Team not found with id: " + id);
-//    }
 
-//    @Override
-//    public void addPlayerToTeam(Long teamId, PlayerDTO playerDTO) {
-//        TeamEntity teamEntity = teamRepository.findById(teamId)
-//                .orElseThrow(() -> new EntityNotFoundException("Team not found with id: " + teamId));
-//
-//        PlayerEntity playerEntity = playerService.convertToPlayerEntity(playerDTO);
-//        playerEntity.setTeamid(teamEntity.getId()); // Setting the team in player entity
-//
-//        teamEntity.getPlayers().add(playerEntity); // Adding player to team's list of players
-//        teamRepository.save(teamEntity);
-//    }
+        return true;
+    }
+    public void saveTeam(TeamEntity teamEntity) {
+       teamRepository.save(teamEntity);
+    }
 
+    @Override
+    public TeamEntity getTeamById(Long id) {
+        return teamRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Team not found with id: " + id));
+    }
 
-//    @Override
-//    public void addCoachToTeam(Long teamId, CoachDTO coachDTO) {
-//        TeamEntity teamEntity = teamRepository.findById(teamId)
-//                .orElseThrow(() -> new EntityNotFoundException("Team not found with id: " + teamId));
-//
-//        CoachEntity coachEntity = coachService.convertToCoachEntity(coachDTO);
-//        coachEntity.setTeamId(teamEntity.getCoachId());
-//        teamEntity.setCoachId(coachEntity.getTeamId());
-//
-//        coachRepository.save(coachEntity);
-//        teamRepository.save(teamEntity);
-//    }
+    @Override
+    public List<TeamEntity> getAllTeams() {
+        return teamRepository.findAll();
+    }
 
-//    @Override
-//    public void validateTeamEntity(TeamEntity TeamEntity) {
-//        List<Long> playerIds = TeamEntity.getPlayerIds();
-//
-//        if (playerIds == null||playerIds.size() != 15) {
-//            throw new IllegalArgumentException("A team must have exactly 15 players.");
-//        }
-//
-//        List<PlayerEntity> players = playerRepository.findAllById(TeamEntity.getPlayerIds());
-//
-//        if (players.size() != 15) {
-//            throw new IllegalArgumentException("Some players were not found in the database.");
-//        }
-//        // Count overseas players
-//        long overseasCount = players.stream()
-//                .filter(PlayerEntity::isOverseas)
-//                .count();
-//
-//         //Check if there are exactly 5 overseas players
+    @Override
+    public TeamEntity updateTeam(TeamEntity teamEntity, Long id) {
+        TeamEntity existingTeam = teamRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Team not found with id: " + id));
+
+        existingTeam.setName(teamEntity.getName());
+        existingTeam.setCountry(teamEntity.getCountry());
+        existingTeam.setTeamCaptain(teamEntity.getTeamCaptain());
+        existingTeam.setOwner(teamEntity.getOwner());
+        existingTeam.setIcon(teamEntity.getIcon());
+        existingTeam.setTotalPoints(teamEntity.getTotalPoints());
+        existingTeam.setLogo(teamEntity.getLogo());
+
+        // If provided, update coach ID
+        if (teamEntity.getCoachId() != null) {
+            existingTeam.setCoachId(teamEntity.getCoachId());
+        }
+
+        // Validate and update players
+        List<PlayerEntity> updatedPlayers = fetchExistingPlayers(teamEntity.getPlayers());
+        existingTeam.setPlayers(updatedPlayers);
+
+        return teamRepository.save(existingTeam);
+    }
+
+    @Override
+    public void deleteTeam(Long id) {
+        TeamEntity teamEntity = teamRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Team not found with id: " + id));
+        teamRepository.delete(teamEntity);
+    }
+
+    @Override
+    public void addPlayerToTeam(Long teamId, Long playerId) {
+        TeamEntity teamEntity = teamRepository.findById(teamId)
+                .orElseThrow(() -> new EntityNotFoundException("Team not found with id: " + teamId));
+
+        PlayerEntity playerEntity = playerRepository.findById(playerId)
+                .orElseThrow(() -> new EntityNotFoundException("Player not found with id: " + playerId));
+
+        // Check if the player is already part of a team
+        if (playerEntity.getTeamid() != null) {
+            throw new IllegalArgumentException("Player is already assigned to a team.");
+        }
+
+        playerEntity.setTeamid(teamEntity.getId()); // Assign player to this team
+        teamEntity.getPlayers().add(playerEntity); // Add the player to the team's list
+
+        teamRepository.save(teamEntity); // Save the changes
+    }
+
+    @Override
+    public void validateTeamEntity(TeamEntity teamEntity) {
+        List<PlayerEntity> players = teamEntity.getPlayers();
+
+        // Validate the number of players
+        if (players == null || players.size() != 15) {
+            throw new IllegalArgumentException("A team must have exactly 15 players.");
+        }
+
+//        long overseasCount = players.stream().filter(PlayerEntity::isOverseas).count();
 //        if (overseasCount != 5) {
-//            throw new IllegalArgumentException("There must be exactly 5 overseas players in the team.");
+//            throw new IllegalArgumentException("A team must have exactly 5 overseas players.");
+//        }
+
+//        List<PlayerEntity> playingPlayers = players.stream().filter(PlayerEntity::isPlaying).collect(Collectors.toList());
+//        if (playingPlayers.size() != 11) {
+//            throw new IllegalArgumentException("A team must have exactly 11 playing players.");
 //        }
 //
-//        // Check playing and backup players
-//        List<PlayerEntity> playingPlayers = players.stream()
-//                .filter(PlayerEntity::isPlaying)
-//                .toList();
-//        List<PlayerEntity> backupPlayers = players.stream()
-//                .filter(player -> !player.isPlaying())
-//                .toList();
-//         //Check if there are exactly 11 playing players and 4 backup players
-//        if (playingPlayers.size() != 11) {
-//            throw new IllegalArgumentException("There must be exactly 11 playing players.");
+//        long overseasPlayingCount = playingPlayers.stream().filter(PlayerEntity::isOverseas).count();
+//        if (overseasPlayingCount != 3) {
+//            throw new IllegalArgumentException("There must be exactly 3 overseas players in the playing 11.");
 //        }
+//
+//        // Ensure there are exactly 4 backup players
+//        List<PlayerEntity> backupPlayers = players.stream().filter(PlayerEntity::isBackup).collect(Collectors.toList());
 //        if (backupPlayers.size() != 4) {
 //            throw new IllegalArgumentException("There must be exactly 4 backup players.");
 //        }
-//
-//         //Check if there are 3 overseas players in the playing team
-//        long overseasPlayingCount = playingPlayers.stream()
-//                .filter(PlayerEntity::isOverseas)
-//                .count();
-//        if (overseasPlayingCount != 3) {
-//            throw new IllegalArgumentException("There must be exactly 3 overseas players in the playing team.");
-//        }
-//    }
-//
-//    public List<PlayerEntity> fetchExistingPlayers(List<Long> playerIds) {
-//        if (playerIds == null || playerIds.isEmpty()) {
-//            return new ArrayList<>(); // Return an empty list if no player IDs are provided
-//        }
-//        return playerRepository.findAllById(playerIds);
-//    }
-//
-//    private void assignPlayingAndBackupRoles(List<PlayerEntity> players, List<Long> playingPlayerIds) {
-//        // Convert playingPlayerIds to a set for quick lookup
-//        Set<Long> playingIdsSet = new HashSet<>(playingPlayerIds);
-//
-//        // Loop through all players and assign their roles
-//        for (PlayerEntity player : players) {
-//            if (playingIdsSet.contains(player.getId())) {
-//                player.setPlaying(true); // Mark as playing if in the list
-//            } else {
-//                player.setPlaying(false); // Otherwise, mark as backup
-//            }
-//        }
-//
-//    }
+
+        teamEntity.setPlayers(players);
+        teamRepository.save(teamEntity);
+    }
+
+    private List<PlayerEntity> fetchExistingPlayers(List<PlayerEntity> players) {
+        List<Long> playerIds = players.stream()
+                .map(PlayerEntity::getId)
+                .collect(Collectors.toList());
+
+        return playerRepository.findAllById(playerIds);
+    }
 }

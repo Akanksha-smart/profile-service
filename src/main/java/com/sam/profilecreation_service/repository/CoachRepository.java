@@ -5,5 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CoachRepository extends JpaRepository<CoachEntity, Integer> {
+public interface CoachRepository extends JpaRepository<CoachEntity, Long> {
+    //CoachEntity findById(Long coachId);
 }

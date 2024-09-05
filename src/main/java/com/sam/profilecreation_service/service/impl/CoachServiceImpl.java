@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class CoachServiceImpl implements CoachService {
@@ -25,8 +24,8 @@ public class CoachServiceImpl implements CoachService {
     }
 
     @Override
-    public CoachEntity findCoachById(Integer id) {
-        CoachEntity coachEntity = coachRepository.findById(Math.toIntExact(id))
+    public CoachEntity findCoachById(Long id) {
+        CoachEntity coachEntity = coachRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Coach not found with id: " + id));
         return coachEntity;
     }
@@ -39,7 +38,7 @@ public class CoachServiceImpl implements CoachService {
 
     @Override
     public CoachEntity updateCoach(CoachEntity CoachEntity, Long id) {
-        Optional<CoachEntity> coachEntity = coachRepository.findById(Math.toIntExact(id));
+        Optional<CoachEntity> coachEntity = coachRepository.findById(id);
         if (coachEntity.isPresent()) {
             CoachEntity coachEntity1 = coachEntity.get();
 //            coachEntity1.setName(CoachEntity.getCoachName());
@@ -55,7 +54,7 @@ public class CoachServiceImpl implements CoachService {
 
     @Override
     public void deleteCoach(Long id) {
-      Optional<CoachEntity> coachEntity = coachRepository.findById(Math.toIntExact(id));
+      Optional<CoachEntity> coachEntity = coachRepository.findById(id);
       if (coachEntity.isPresent()) {
           coachRepository.delete(coachEntity.get());
       }else

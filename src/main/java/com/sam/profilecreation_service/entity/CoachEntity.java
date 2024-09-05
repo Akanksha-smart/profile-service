@@ -25,11 +25,11 @@ public class CoachEntity{
     private String profilePicture;
     private String specialization;
     private String username;
+
+    @Enumerated(EnumType.STRING)
     private ERole role;
     private String email;
 
     @Column(name = "team_id")
     private Long teamId;
-
-
 }

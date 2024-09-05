@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService {
                 admin.setUsername(userEntity.getUsername());
                 admin.setEmail(userEntity.getEmail());
                 admin.setPassword(userEntity.getPassword());
-                admin.setRole(ERole.valueOf("ADMIN"));
+                admin.setRole(ERole.ADMIN);
                 admin.setGender(userEntity.getGender());
                 admin.setDateOfBirth(userEntity.getDateOfBirth());
                 admin.setName(userEntity.getName());
@@ -72,15 +72,16 @@ public class UserServiceImpl implements UserService {
                 PlayerEntity player = new PlayerEntity();
                 player.setUsername(userEntity.getUsername());
                 player.setEmail(userEntity.getEmail());
-                player.setRole(ERole.valueOf("PLAYER"));
+                player.setRole(ERole.PLAYER);
                 player.setGender(userEntity.getGender());
                 player.setDateOfBirth(userEntity.getDateOfBirth());
                 player.setName(userEntity.getName());
                 player.setProfilePicture(userEntity.getProfilePicture());
                 player.setCountry(userEntity.getCountry());
-                player.setSpecialization(userEntity.getSpecialization());
+
+               player.setSpecialization(userEntity.getSpecialization());
                 player.setOverseas(false);
-                player.set_backup(false);
+                player.setBackup(false);
                 player.setPlaying(false);
                 playerRepository.save(player);
                 break;
@@ -89,13 +90,13 @@ public class UserServiceImpl implements UserService {
                 CoachEntity coach = new CoachEntity();
                 coach.setUsername(userEntity.getUsername());
                 coach.setEmail(userEntity.getEmail());
-                coach.setRole(ERole.valueOf("COACH"));
+                coach.setRole(ERole.COACH);
                 coach.setGender(userEntity.getGender());
                 coach.setDateOfBirth(userEntity.getDateOfBirth());
                 coach.setName(userEntity.getName());
                 coach.setProfilePicture(userEntity.getProfilePicture());
                 coach.setCountry(userEntity.getCountry());
-                coach.setSpecialization(userEntity.getSpecialization());
+                coach.setSpecialization(null);
                 coachRepository.save(coach);
                 break;
 

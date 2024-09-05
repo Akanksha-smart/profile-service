@@ -22,17 +22,23 @@ public class PlayerEntity {
     private String email;
     private String username;
     private LocalDate dateOfBirth;
+
     private String specialization;
     private String gender;
     private String country;
     private String profilePicture;
+    @Enumerated(EnumType.STRING)
     private ERole role;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private TeamEntity teamEntity;
+
     private Long teamid;
     @Column(name = "is_playing")
-    private boolean Playing;
+    private boolean isPlaying;
     @Column(name = "is_overseas")
-    private boolean Overseas;
+    private boolean isOverseas;
     @Column(name = "is_backup")
-    private boolean is_backup;
+    private boolean isBackup;
 
 }

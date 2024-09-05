@@ -37,9 +37,7 @@ public class TeamEntity {
 
     private int totalPoints;
 
-   @Lob
-   @Column(name = "logo")
-    private byte[] logo; // For storing the team's logo this is for the landing page of the teams
+    private String logo; // For storing the team's logo this is for the landing page of the teams
     // according to the requirement we will use
     private String icon; // For storing a text or URL for the team's icon  this for the icon on the matches
 
