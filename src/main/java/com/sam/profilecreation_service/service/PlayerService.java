@@ -20,4 +20,5 @@ public interface PlayerService {
 
     List<PlayerEntity> getPlayersByCountry(String country);
 
+    List<PlayerEntity> getPlayersWithNoTeam();
 }

@@ -68,9 +68,10 @@ public class PlayerController {
         return playerService.getPlayersByCountry(country);
     }
 
-    // create a api it need to return the 10 players and 5 players from the oversers this validation i need within team
-
-    // the player is exists in any team make him
-
+    @GetMapping("/no-team")
+    public ResponseEntity<List<PlayerEntity>> getPlayersWithNoTeam() {
+        List<PlayerEntity> playersWithoutTeam = playerService.getPlayersWithNoTeam();
+        return new ResponseEntity<>(playersWithoutTeam, HttpStatus.OK);
+    }
 
 }

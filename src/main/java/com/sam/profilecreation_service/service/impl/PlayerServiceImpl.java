@@ -4,12 +4,9 @@ import com.sam.profilecreation_service.entity.PlayerEntity;
 import com.sam.profilecreation_service.repository.PlayerRepository;
 import com.sam.profilecreation_service.service.PlayerService;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class PlayerServiceImpl implements PlayerService {
@@ -69,5 +66,10 @@ public class PlayerServiceImpl implements PlayerService {
     @Override
     public List<PlayerEntity> getPlayersByCountry(String country) {
         return playerRepository.findByCountry(country);
+    }
+
+    @Override
+    public List<PlayerEntity> getPlayersWithNoTeam() {
+        return playerRepository.findByTeamidIsNull();
     }
 }

@@ -13,4 +13,7 @@ import java.util.Optional;
 public interface PlayerRepository extends JpaRepository<PlayerEntity, Long> {
     List<PlayerEntity> findByCountry(String country);
     Optional<PlayerEntity> findById(Long playerId);
+
+    List<PlayerEntity> findByTeamidIsNull();
+
 }
