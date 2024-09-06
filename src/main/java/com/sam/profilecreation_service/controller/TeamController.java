@@ -1,9 +1,9 @@
 package com.sam.profilecreation_service.controller;
 
 import com.sam.profilecreation_service.dto.TeamRegisterDTO;
+import com.sam.profilecreation_service.entity.CoachEntity;
 import com.sam.profilecreation_service.entity.TeamEntity;
 import com.sam.profilecreation_service.entity.PlayerEntity;
-import com.sam.profilecreation_service.entity.CoachEntity;
 import com.sam.profilecreation_service.service.TeamService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,34 +21,6 @@ public class TeamController {
     @Autowired
     private TeamService teamService;
 
-//    @PostMapping("/create")
-//    public ResponseEntity<String> createTeam(@RequestBody TeamEntity teamEntity) {
-//        try {
-//            teamService.createTeam(teamEntity);
-//            return new ResponseEntity<>("Team created successfully", HttpStatus.CREATED);
-//        } catch (IllegalArgumentException e) {
-//            return ResponseEntity.badRequest().body(e.getMessage());
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while creating the team.");
-//        }
-//    }
-
-//    @PostMapping("/create")
-//    public ResponseEntity<String> createTeam(@RequestBody TeamEntity teamEntity) {
-//        List<PlayerEntity> players = teamEntity.getPlayers();
-//
-//        if (teamService.validateTeamCreation(players)) {
-//            // Set the team for each player
-//            players.forEach(player -> player.setTeamEntity(teamEntity));
-//
-//            // Save the team entity, which will also save the associated players
-//            teamService.saveTeam(teamEntity);
-//            return ResponseEntity.ok("Team created successfully!");
-//        } else {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid team data.");
-//        }
-//
-//    }
 
 
 
@@ -111,7 +83,7 @@ public class TeamController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while adding the player to the team.");
         }
     }
-
+//
 //    @PostMapping("/{teamId}/coach")
 //    public ResponseEntity<String> addCoachToTeam(@PathVariable("teamId") Long teamId, @RequestBody CoachEntity coachEntity) {
 //        try {
