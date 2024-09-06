@@ -46,6 +46,14 @@ public class TeamServiceImpl implements TeamService {
         team.setTotalPoints(teamRegisterDTO.getTotalPoints());
         team.setPlayers(players); // Set the list of players
 
+        TeamEntity savedTeam = teamRepository.save(team);
+
+
+        for (PlayerEntity player : players) {
+            player.setTeamEntity(savedTeam);  // Set the team entity
+            player.setTeamid(savedTeam.getId());  // Set the team ID in player entity
+        }
+
         // Save or update players
         List<PlayerEntity> managedPlayers = saveOrUpdatePlayers(players);
 
@@ -53,7 +61,7 @@ public class TeamServiceImpl implements TeamService {
         team.setPlayers(managedPlayers);
 
         // Save the team
-        return teamRepository.save(team);
+        return savedTeam;
     }
 
     private List<PlayerEntity> saveOrUpdatePlayers(List<PlayerEntity> players) {
@@ -160,6 +168,7 @@ public class TeamServiceImpl implements TeamService {
         existingTeam.setIcon(teamEntity.getIcon());
         existingTeam.setTotalPoints(teamEntity.getTotalPoints());
         existingTeam.setLogo(teamEntity.getLogo());
+
 
         // If provided, update coach ID
         if (teamEntity.getCoachId() != null) {

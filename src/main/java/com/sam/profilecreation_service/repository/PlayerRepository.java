@@ -2,6 +2,7 @@ package com.sam.profilecreation_service.repository;
 
 import com.sam.profilecreation_service.entity.PlayerEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Repository;
 
@@ -14,6 +15,7 @@ public interface PlayerRepository extends JpaRepository<PlayerEntity, Long> {
     List<PlayerEntity> findByCountry(String country);
     Optional<PlayerEntity> findById(Long playerId);
 
-    List<PlayerEntity> findByTeamidIsNull();
+    @Query("SELECT p FROM PlayerEntity p WHERE p.teamid IS NULL")
+    List<PlayerEntity> findByTeamIdIsNull();
 
 }

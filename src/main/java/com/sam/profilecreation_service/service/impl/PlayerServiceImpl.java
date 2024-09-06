@@ -70,6 +70,6 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     public List<PlayerEntity> getPlayersWithNoTeam() {
-        return playerRepository.findByTeamidIsNull();
+        return playerRepository.findByTeamIdIsNull();
     }
 }
