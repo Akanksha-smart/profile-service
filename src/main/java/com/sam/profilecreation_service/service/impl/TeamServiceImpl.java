@@ -114,18 +114,17 @@ public class TeamServiceImpl implements TeamService {
         if (players.size() != 15) {
             throw new Exception("A team must consist of exactly 15 players.");
         }
-
         // Count specializations
-        long bowlers = players.stream().filter(p -> "Bowler".equals(p.getSpecialization())).count();
-        long batters = players.stream().filter(p -> "Batter".equals(p.getSpecialization())).count();
-        long allRounders = players.stream().filter(p -> "All-Rounder".equals(p.getSpecialization())).count();
+        long bowlers = players.stream().filter(p -> "Bowler".equalsIgnoreCase(p.getSpecialization())).count();
+        long batters = players.stream().filter(p -> "Batter".equalsIgnoreCase(p.getSpecialization().toUpperCase())).count();
+        long allRounders = players.stream().filter(p -> "All-Rounder".equalsIgnoreCase(p.getSpecialization().toUpperCase())).count();
 
         if (bowlers != 5 || batters != 5 || allRounders != 5) {
             throw new Exception("Team must have 5 Bowlers, 5 Batters, and 5 All-Rounders.");
         }
 
         // Check country rules
-        long sameCountryCount = players.stream().filter(p -> teamCountry.equals(p.getCountry())).count();
+        long sameCountryCount = players.stream().filter(p -> teamCountry.equalsIgnoreCase(p.getCountry())).count();
         if (sameCountryCount < 10) {
             throw new Exception("The team must have at least 10 players from the same country as the team's country.");
         }
