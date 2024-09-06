@@ -42,6 +42,7 @@ public class TeamServiceImpl implements TeamService {
         team.setCoachName(teamRegisterDTO.getCoach());
         team.setOwner(teamRegisterDTO.getOwner());
         team.setIcon(teamRegisterDTO.getIcon());
+        team.setCoachId(team.getCoachId());
         team.setTotalPoints(teamRegisterDTO.getTotalPoints());
         team.setPlayers(players); // Set the list of players
 
@@ -239,4 +240,10 @@ public class TeamServiceImpl implements TeamService {
 
         return playerRepository.findAllById(playerIds);
     }
+
+    @Override
+    public List<TeamEntity> getTeamsByCoachId(Long coachId) {
+        return teamRepository.findByCoachId(coachId);
+    }
+
 }

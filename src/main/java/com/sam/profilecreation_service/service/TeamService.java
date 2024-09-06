@@ -33,6 +33,8 @@ public interface TeamService {
 
     void validateTeamEntity(TeamEntity teamEntity);
 
+    List<TeamEntity> getTeamsByCoachId(Long coachId);
+
 //    TeamEntity createTeam(TeamEntity TeamEntity);
 //
 //    TeamEntity getTeamById(Long id);
