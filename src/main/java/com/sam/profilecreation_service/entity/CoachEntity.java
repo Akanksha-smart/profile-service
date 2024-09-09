@@ -18,6 +18,8 @@ public class CoachEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long coachId;
+
+    @Column(nullable = false, unique = true)
     private String name;
     private String country;
     private String gender;

@@ -50,13 +50,13 @@ public class TeamController {
         return new ResponseEntity<>(teamList, HttpStatus.OK);
     }
 
-    @GetMapping("/coach/{coachId}")
-    public ResponseEntity<List<TeamEntity>> getTeamByCoachId(@PathVariable Long coachId) {
-        List<TeamEntity> teams = teamService.getTeamsByCoachId(coachId);
-        if (teams.isEmpty()) {
+    @GetMapping("/coach/{name}")
+    public ResponseEntity<?> getTeamByCoachName(@PathVariable String  name) {
+        Integer coachId  = teamService.getTeamsByCoachName(name);
+        if (coachId== null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND); // If no teams found for the coach
         }
-        return new ResponseEntity<>(teams, HttpStatus.OK);
+        return new ResponseEntity<>(coachId, HttpStatus.OK);
     }
 
     @PutMapping("/update/{id}")

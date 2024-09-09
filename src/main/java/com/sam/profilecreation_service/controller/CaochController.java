@@ -26,11 +26,11 @@ public class CaochController {
         return new ResponseEntity<>(createdCoach, HttpStatus.CREATED);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<CoachEntity> findCoachById(@PathVariable Long id) {
+    @GetMapping("/{name}")
+    public ResponseEntity<Long> findCoachIdByCoachName(@PathVariable String  name) {
         try {
-            CoachEntity CoachEntity = coachService.findCoachById(id);
-            return new ResponseEntity<>(CoachEntity, HttpStatus.OK);
+            Long CoachId = coachService.findCoachByName(name);
+            return new ResponseEntity<>(CoachId, HttpStatus.OK);
         } catch (EntityNotFoundException ex) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }

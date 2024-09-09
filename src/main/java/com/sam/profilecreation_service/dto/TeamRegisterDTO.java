@@ -16,7 +16,8 @@ public class TeamRegisterDTO {
     private String name;
     private String country;
     private String teamCaptain;
-    private String coach;
+    private String coachName;
+    private Long coachId;
     private String owner;
     private String icon;  // Base64 encoded icon data
     private int totalPoints;

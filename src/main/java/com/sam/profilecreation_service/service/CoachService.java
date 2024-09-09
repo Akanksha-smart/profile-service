@@ -8,7 +8,7 @@ public interface CoachService {
 
     CoachEntity createCoach(CoachEntity CoachEntity);
 
-    //CoachEntity findCoachById(Integer id);
+    Long findCoachByName(String CoachName);
 
     CoachEntity findCoachById(Long id);
 

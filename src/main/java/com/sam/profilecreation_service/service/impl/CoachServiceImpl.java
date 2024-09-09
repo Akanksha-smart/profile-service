@@ -28,6 +28,11 @@ public class CoachServiceImpl implements CoachService {
     }
 
     @Override
+    public Long findCoachByName(String name) {
+        return coachRepository.findCoachIdByCoachName(name);
+    }
+
+    @Override
     public CoachEntity findCoachById(Long id) {
         return coachRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Coach not found with id: " + id));

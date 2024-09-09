@@ -26,29 +26,63 @@ public class TeamServiceImpl implements TeamService {
     @Autowired
     private PlayerRepository playerRepository;
 
+//    @Transactional
+//    public TeamEntity createTeam(TeamRegisterDTO teamRegisterDTO) throws Exception {
+//        // Convert PlayerDTOs to Player entities
+//        List<PlayerEntity> players = convertPlayerDTOsToEntities(teamRegisterDTO.getPlayers());
+//
+//        // Validate players according to the rules
+//        validatePlayers(players, teamRegisterDTO.getCountry());
+//
+//        // Create a new Team entity and populate it with DTO data
+//        TeamEntity team = new TeamEntity();
+//        team.setName(teamRegisterDTO.getName());
+//        team.setCountry(teamRegisterDTO.getCountry());
+//        team.setTeamCaptain(teamRegisterDTO.getTeamCaptain());
+//        team.setCoachName(teamRegisterDTO.getCoachName());
+//        team.setOwner(teamRegisterDTO.getOwner());
+//        team.setIcon(teamRegisterDTO.getIcon());
+//        team.setCoachId(teamRegisterDTO.getCoachId());
+//        team.setTotalPoints(teamRegisterDTO.getTotalPoints());
+//        team.setPlayers(players); // Set the list of players
+//
+//        TeamEntity savedTeam = teamRepository.save(team);
+//
+//
+//        for (PlayerEntity player : players) {
+//            player.setTeamEntity(savedTeam);
+//            player.setTeamid(savedTeam.getId());
+//        }
+//
+//        // Save or update players
+//        List<PlayerEntity> managedPlayers = saveOrUpdatePlayers(players);
+//
+//        // Associate managed players with the team
+//        team.setPlayers(managedPlayers);
+//
+//        // Save the team
+//        return savedTeam;
+//    }
+
     @Transactional
     public TeamEntity createTeam(TeamRegisterDTO teamRegisterDTO) throws Exception {
-        // Convert PlayerDTOs to Player entities
         List<PlayerEntity> players = convertPlayerDTOsToEntities(teamRegisterDTO.getPlayers());
-
-        // Validate players according to the rules
         validatePlayers(players, teamRegisterDTO.getCountry());
 
-        // Create a new Team entity and populate it with DTO data
         TeamEntity team = new TeamEntity();
         team.setName(teamRegisterDTO.getName());
         team.setCountry(teamRegisterDTO.getCountry());
         team.setTeamCaptain(teamRegisterDTO.getTeamCaptain());
-        team.setCoachName(teamRegisterDTO.getCoach());
+        team.setCoachName(teamRegisterDTO.getCoachName());
         team.setOwner(teamRegisterDTO.getOwner());
         team.setIcon(teamRegisterDTO.getIcon());
-        team.setCoachId(team.getCoachId());
+        team.setCoachId(teamRegisterDTO.getCoachId());
         team.setTotalPoints(teamRegisterDTO.getTotalPoints());
-        team.setPlayers(players); // Set the list of players
 
+        // Save team first
         TeamEntity savedTeam = teamRepository.save(team);
 
-
+        // Update players' team reference
         for (PlayerEntity player : players) {
             player.setTeamEntity(savedTeam);
             player.setTeamid(savedTeam.getId());
@@ -58,20 +92,54 @@ public class TeamServiceImpl implements TeamService {
         List<PlayerEntity> managedPlayers = saveOrUpdatePlayers(players);
 
         // Associate managed players with the team
-        team.setPlayers(managedPlayers);
+        savedTeam.setPlayers(managedPlayers);
 
-        // Save the team
-        return savedTeam;
+        // Save the team with updated players
+        return teamRepository.save(savedTeam);
     }
+
+
+//    private List<PlayerEntity> saveOrUpdatePlayers(List<PlayerEntity> players) {
+//        List<PlayerEntity> managedPlayers = new ArrayList<>();
+//        for (PlayerEntity player : players) {
+//            if (player.getId() != null) {
+//                // If player ID exists, it is a detached entity, so we merge it
+//                PlayerEntity managedPlayer = playerRepository.findById(player.getId()).orElse(null);
+//                if (managedPlayer != null) {
+//                    // Update existing managed player
+//                    managedPlayer.setName(player.getName());
+//                    managedPlayer.setEmail(player.getEmail());
+//                    managedPlayer.setUsername(player.getUsername());
+//                    managedPlayer.setDateOfBirth(player.getDateOfBirth());
+//                    managedPlayer.setSpecialization(player.getSpecialization());
+//                    managedPlayer.setGender(player.getGender());
+//                    managedPlayer.setCountry(player.getCountry());
+//                    managedPlayer.setProfilePicture(player.getProfilePicture());
+//                    managedPlayer.setRole(player.getRole());
+//                    managedPlayer.setPlaying(player.isPlaying());
+//                    managedPlayer.setOverseas(player.isOverseas());
+//                    managedPlayer.setBackup(player.isBackup());
+//                    managedPlayers.add(playerRepository.save(managedPlayer)); // Save the updated player
+//                } else {
+//                    // Handle case where player with ID does not exist
+//                    managedPlayers.add(playerRepository.save(player));
+//                }
+//            } else {
+//                // New player, so we persist
+//                managedPlayers.add(playerRepository.save(player));
+//            }
+//        }
+//        return managedPlayers;
+//    }
 
     private List<PlayerEntity> saveOrUpdatePlayers(List<PlayerEntity> players) {
         List<PlayerEntity> managedPlayers = new ArrayList<>();
         for (PlayerEntity player : players) {
             if (player.getId() != null) {
-                // If player ID exists, it is a detached entity, so we merge it
+                // If player ID exists, fetch the existing player and update it
                 PlayerEntity managedPlayer = playerRepository.findById(player.getId()).orElse(null);
                 if (managedPlayer != null) {
-                    // Update existing managed player
+                    // Update existing player details
                     managedPlayer.setName(player.getName());
                     managedPlayer.setEmail(player.getEmail());
                     managedPlayer.setUsername(player.getUsername());
@@ -80,11 +148,12 @@ public class TeamServiceImpl implements TeamService {
                     managedPlayer.setGender(player.getGender());
                     managedPlayer.setCountry(player.getCountry());
                     managedPlayer.setProfilePicture(player.getProfilePicture());
+                    managedPlayer.setTeamid(player.getTeamid());
                     managedPlayer.setRole(player.getRole());
                     managedPlayer.setPlaying(player.isPlaying());
                     managedPlayer.setOverseas(player.isOverseas());
                     managedPlayer.setBackup(player.isBackup());
-                    managedPlayers.add(playerRepository.save(managedPlayer)); // Save the updated player
+                    managedPlayers.add(playerRepository.save(managedPlayer));
                 } else {
                     // Handle case where player with ID does not exist
                     managedPlayers.add(playerRepository.save(player));
@@ -96,6 +165,7 @@ public class TeamServiceImpl implements TeamService {
         }
         return managedPlayers;
     }
+
 
     private List<PlayerEntity> convertPlayerDTOsToEntities(List<PlayerDTO> playerDTOs) throws Exception {
         List<PlayerEntity> players = new ArrayList<>();
@@ -242,6 +312,11 @@ public class TeamServiceImpl implements TeamService {
         teamRepository.save(teamEntity);
     }
 
+    @Override
+    public Integer getTeamsByCoachName(String name) {
+        return teamRepository.findByCoachName(name);
+    }
+
     private List<PlayerEntity> fetchExistingPlayers(List<PlayerEntity> players) {
         List<Long> playerIds = players.stream()
                 .map(PlayerEntity::getId)
@@ -250,9 +325,9 @@ public class TeamServiceImpl implements TeamService {
         return playerRepository.findAllById(playerIds);
     }
 
-    @Override
-    public List<TeamEntity> getTeamsByCoachId(Long coachId) {
-        return teamRepository.findByCoachId(coachId);
-    }
+//    @Override
+//    public List<TeamEntity> getTeamsByCoachId(Long coachId) {
+//        return teamRepository.findByCoachId(coachId);
+//    }
 
 }

@@ -1,9 +1,11 @@
 package com.sam.profilecreation_service.service;
 
 
+import ch.qos.logback.core.model.INamedModel;
 import com.sam.profilecreation_service.dto.TeamRegisterDTO;
 import com.sam.profilecreation_service.entity.PlayerEntity;
 import com.sam.profilecreation_service.entity.TeamEntity;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
@@ -33,7 +35,12 @@ public interface TeamService {
 
     void validateTeamEntity(TeamEntity teamEntity);
 
-    List<TeamEntity> getTeamsByCoachId(Long coachId);
+//    List<TeamEntity> getTeamsByCoachName(String name);
+
+
+    Integer getTeamsByCoachName(String name);
+
+
 
 //    TeamEntity createTeam(TeamEntity TeamEntity);
 //
