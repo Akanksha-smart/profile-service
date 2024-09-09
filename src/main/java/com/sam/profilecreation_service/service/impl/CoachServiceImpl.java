@@ -1,8 +1,10 @@
 package com.sam.profilecreation_service.service.impl;
 
 import com.sam.profilecreation_service.entity.CoachEntity;
+import com.sam.profilecreation_service.entity.TeamEntity;
 import com.sam.profilecreation_service.repository.CoachRepository;
 import com.sam.profilecreation_service.service.CoachService;
+import com.sam.profilecreation_service.service.TeamService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,9 @@ public class CoachServiceImpl implements CoachService {
 
     @Override
     public CoachEntity createCoach(CoachEntity coachEntity) {
+//        TeamEntity teamEntity = new TeamEntity();
+//        teamEntity.setName(coachEntity.getName());
+//        teamEntity.setCoachId(coachEntity.getTeamId());
         return coachRepository.save(coachEntity);
     }
 

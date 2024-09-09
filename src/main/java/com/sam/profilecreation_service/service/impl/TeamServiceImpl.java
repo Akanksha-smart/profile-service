@@ -50,8 +50,8 @@ public class TeamServiceImpl implements TeamService {
 
 
         for (PlayerEntity player : players) {
-            player.setTeamEntity(savedTeam);  // Set the team entity
-            player.setTeamid(savedTeam.getId());  // Set the team ID in player entity
+            player.setTeamEntity(savedTeam);
+            player.setTeamid(savedTeam.getId());
         }
 
         // Save or update players

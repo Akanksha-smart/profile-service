@@ -1,6 +1,7 @@
 package com.sam.profilecreation_service.service;
 
 
+import com.sam.profilecreation_service.entity.ERole;
 import com.sam.profilecreation_service.entity.PlayerEntity;
 import com.sam.profilecreation_service.repository.PlayerRepository;
 import com.sam.profilecreation_service.service.impl.PlayerServiceImpl;
@@ -11,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -73,20 +75,30 @@ public class PlayerServiceTest {
         verify(playerRepository, times(1)).findById(1L);
     }
 
-//    @Test
-//    void testGetAllPlayers_Success() {
-//        List<PlayerEntity> players = new ArrayList<>();
-//        players.add(new PlayerEntity(1L, "John", "Male", "USA", null, null, null, null, null,"PLAYER"));
-//        players.add(new PlayerEntity(2L, "Jane", "Female", "UK", null, null, null, null, null,"PLAYER"));
-//
-//        when(playerRepository.findAll()).thenReturn(players);
-//
-//        List<PlayerEntity> allPlayers = playerService.getAllPlayers();
-//
-//        assertNotNull(allPlayers);
-//        assertEquals(2, allPlayers.size());
-//        verify(playerRepository, times(1)).findAll();
-//    }
+    @Test
+    void testGetAllPlayers_Success() {
+        // Create mock player entities
+        List<PlayerEntity> players = new ArrayList<>();
+        players.add(new PlayerEntity(1L, "John", "john@example.com", "john123", LocalDate.of(1990, 5, 15),
+                "Batsman", "Male", "USA", null, ERole.PLAYER, null, null, false, false, false));
+        players.add(new PlayerEntity(2L, "Jane", "jane@example.com", "jane123", LocalDate.of(1992, 8, 25),
+                "Bowler", "Female", "UK", null, ERole.PLAYER, null, null, false, false, false));
+
+
+        // Mock the repository's behavior to return the list of players
+        when(playerRepository.findAll()).thenReturn(players);
+
+        // Call the service method to retrieve all players
+        List<PlayerEntity> allPlayers = playerService.getAllPlayers();
+
+        // Validate the results
+        assertNotNull(allPlayers);  // Ensure the result is not null
+        assertEquals(2, allPlayers.size());  // Ensure the list contains exactly 2 players
+
+        // Verify that the findAll method was called exactly once
+        verify(playerRepository, times(1)).findAll();
+    }
+
 
     @Test
     void testUpdatePlayer_Success() {
@@ -148,32 +160,53 @@ public class PlayerServiceTest {
         verify(playerRepository, never()).delete(any(PlayerEntity.class));
     }
 
-//    @Test
-//    void testGetPlayersByCountry_Success() {
-//        List<PlayerEntity> players = new ArrayList<>();
-//        players.add(new PlayerEntity(1L, "John", "Male", "USA", null, null, null, null, null));
-//
-//        when(playerRepository.findByCountry("USA")).thenReturn(players);
-//
-//        List<PlayerEntity> result = playerService.getPlayersByCountry("USA");
-//
-//        assertNotNull(result);
-//        assertEquals(1, result.size());
-//        verify(playerRepository, times(1)).findByCountry("USA");
-//    }
+    @Test
+    void testGetPlayersByCountry_Success() {
+        // Creating a player entity using setters instead of a constructor
+        PlayerEntity player = new PlayerEntity();
+        player.setId(1L);
+        player.setName("John");
+        player.setGender("Male");
+        player.setCountry("USA");
 
-//    @Test
-//    void testGetPlayersWithNoTeam_Success() {
-//        List<PlayerEntity> players = new ArrayList<>();
-//        players.add(new PlayerEntity(1L, "John", "Male", "USA", null, null, null, null, null));
-//
-//        when(playerRepository.findByTeamidIsNull()).thenReturn(players);
-//
-//        List<PlayerEntity> result = playerService.getPlayersWithNoTeam();
-//
-//        assertNotNull(result);
-//        assertEquals(1, result.size());
-//        verify(playerRepository, times(1)).findByTeamidIsNull();
-//    }
+        List<PlayerEntity> players = new ArrayList<>();
+        players.add(player);
 
+        // Mock the repository method to return the players list for "USA"
+        when(playerRepository.findByCountry("USA")).thenReturn(players);
+
+        // Invoke the service method
+        List<PlayerEntity> result = playerService.getPlayersByCountry("USA");
+
+        // Assertions
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals("John", result.get(0).getName());
+        assertEquals("USA", result.get(0).getCountry());
+
+        // Verify that the repository method was called exactly once
+        verify(playerRepository, times(1)).findByCountry("USA");
+    }
+
+    @Test
+    void testGetPlayersWithNoTeam_Success() {
+        // Creating a player entity using setters instead of a constructor
+        PlayerEntity player = new PlayerEntity();
+        player.setId(1L);
+        player.setName("John");
+        player.setGender("Male");
+        player.setCountry("USA");
+        player.setTeamEntity(null); // No team assigned
+
+        List<PlayerEntity> players = new ArrayList<>();
+        players.add(player);
+
+        when(playerRepository.findByTeamIdIsNull()).thenReturn(players);
+
+        List<PlayerEntity> result = playerService.getPlayersWithNoTeam();
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        verify(playerRepository, times(1)).findByTeamIdIsNull();
+    }
 }
