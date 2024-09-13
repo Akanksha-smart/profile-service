@@ -1,7 +1,7 @@
 package com.sam.profilecreation_service.dto;
 
-import com.sam.profilecreation_service.entity.PlayerEntity;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +11,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class TeamRegisterDTO {
 
     private String name;

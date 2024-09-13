@@ -1,19 +1,22 @@
 package com.sam.profilecreation_service.entity;
 
 
+
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
 
 @Entity
 @Table(name = "coach")
-@Getter
-@Setter
-@ToString
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class CoachEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,22 +1,24 @@
 package com.sam.profilecreation_service.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "team")
-@Getter
-@Setter
-@ToString
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class TeamEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "team_id")
     private Long id;
     private  String name;
 
@@ -44,4 +46,14 @@ public class TeamEntity {
     private String icon; // For storing a text or URL for the team's icon  this for the icon on the matches
 
 
+    public TeamEntity(String name, String country, String teamCaptain, String coachName, String owner, String icon, Long coachId, int totalPoints) {
+        this.name = name;
+        this.country = country;
+        this.teamCaptain = teamCaptain;
+        this.coachId = coachId;
+        this.coachName = coachName;
+        this.owner = owner;
+        this.icon = icon;
+        this.totalPoints = totalPoints;
+    }
 }

@@ -2,7 +2,6 @@ package com.sam.profilecreation_service.service.impl;
 
 import com.sam.profilecreation_service.dto.PlayerDTO;
 import com.sam.profilecreation_service.dto.TeamRegisterDTO;
-import com.sam.profilecreation_service.entity.ERole;
 import com.sam.profilecreation_service.entity.PlayerEntity;
 import com.sam.profilecreation_service.entity.TeamEntity;
 import com.sam.profilecreation_service.repository.PlayerRepository;
@@ -13,9 +12,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
-
 
 @Service
 public class TeamServiceImpl implements TeamService {
@@ -26,152 +24,66 @@ public class TeamServiceImpl implements TeamService {
     @Autowired
     private PlayerRepository playerRepository;
 
-//    @Transactional
-//    public TeamEntity createTeam(TeamRegisterDTO teamRegisterDTO) throws Exception {
-//        // Convert PlayerDTOs to Player entities
-//        List<PlayerEntity> players = convertPlayerDTOsToEntities(teamRegisterDTO.getPlayers());
-//
-//        // Validate players according to the rules
-//        validatePlayers(players, teamRegisterDTO.getCountry());
-//
-//        // Create a new Team entity and populate it with DTO data
-//        TeamEntity team = new TeamEntity();
-//        team.setName(teamRegisterDTO.getName());
-//        team.setCountry(teamRegisterDTO.getCountry());
-//        team.setTeamCaptain(teamRegisterDTO.getTeamCaptain());
-//        team.setCoachName(teamRegisterDTO.getCoachName());
-//        team.setOwner(teamRegisterDTO.getOwner());
-//        team.setIcon(teamRegisterDTO.getIcon());
-//        team.setCoachId(teamRegisterDTO.getCoachId());
-//        team.setTotalPoints(teamRegisterDTO.getTotalPoints());
-//        team.setPlayers(players); // Set the list of players
-//
-//        TeamEntity savedTeam = teamRepository.save(team);
-//
-//
-//        for (PlayerEntity player : players) {
-//            player.setTeamEntity(savedTeam);
-//            player.setTeamid(savedTeam.getId());
-//        }
-//
-//        // Save or update players
-//        List<PlayerEntity> managedPlayers = saveOrUpdatePlayers(players);
-//
-//        // Associate managed players with the team
-//        team.setPlayers(managedPlayers);
-//
-//        // Save the team
-//        return savedTeam;
-//    }
-
     @Transactional
     public TeamEntity createTeam(TeamRegisterDTO teamRegisterDTO) throws Exception {
-        List<PlayerEntity> players = convertPlayerDTOsToEntities(teamRegisterDTO.getPlayers());
-        validatePlayers(players, teamRegisterDTO.getCountry());
+        List<PlayerEntity> players = convertPlayerDtoToEntity(teamRegisterDTO.getPlayers());
+        validateTeamPlayers(players, teamRegisterDTO.getCountry());
 
-        TeamEntity team = new TeamEntity();
-        team.setName(teamRegisterDTO.getName());
-        team.setCountry(teamRegisterDTO.getCountry());
-        team.setTeamCaptain(teamRegisterDTO.getTeamCaptain());
-        team.setCoachName(teamRegisterDTO.getCoachName());
-        team.setOwner(teamRegisterDTO.getOwner());
-        team.setIcon(teamRegisterDTO.getIcon());
-        team.setCoachId(teamRegisterDTO.getCoachId());
-        team.setTotalPoints(teamRegisterDTO.getTotalPoints());
+        TeamEntity team = new TeamEntity(
+                teamRegisterDTO.getName(),
+                teamRegisterDTO.getCountry(),
+                teamRegisterDTO.getTeamCaptain(),
+                teamRegisterDTO.getCoachName(),
+                teamRegisterDTO.getOwner(),
+                teamRegisterDTO.getIcon(),
+                teamRegisterDTO.getCoachId(),
+                teamRegisterDTO.getTotalPoints()
+        );
 
-        // Save team first
         TeamEntity savedTeam = teamRepository.save(team);
 
-        // Update players' team reference
-        for (PlayerEntity player : players) {
+        players.forEach(player -> {
             player.setTeamEntity(savedTeam);
             player.setTeamid(savedTeam.getId());
-        }
+        });
 
-        // Save or update players
-        List<PlayerEntity> managedPlayers = saveOrUpdatePlayers(players);
-
-        // Associate managed players with the team
+        List<PlayerEntity> managedPlayers = savePlayerOrUpdatePlayers(players);
         savedTeam.setPlayers(managedPlayers);
-
-        // Save the team with updated players
         return teamRepository.save(savedTeam);
     }
 
-
-//    private List<PlayerEntity> saveOrUpdatePlayers(List<PlayerEntity> players) {
-//        List<PlayerEntity> managedPlayers = new ArrayList<>();
-//        for (PlayerEntity player : players) {
-//            if (player.getId() != null) {
-//                // If player ID exists, it is a detached entity, so we merge it
-//                PlayerEntity managedPlayer = playerRepository.findById(player.getId()).orElse(null);
-//                if (managedPlayer != null) {
-//                    // Update existing managed player
-//                    managedPlayer.setName(player.getName());
-//                    managedPlayer.setEmail(player.getEmail());
-//                    managedPlayer.setUsername(player.getUsername());
-//                    managedPlayer.setDateOfBirth(player.getDateOfBirth());
-//                    managedPlayer.setSpecialization(player.getSpecialization());
-//                    managedPlayer.setGender(player.getGender());
-//                    managedPlayer.setCountry(player.getCountry());
-//                    managedPlayer.setProfilePicture(player.getProfilePicture());
-//                    managedPlayer.setRole(player.getRole());
-//                    managedPlayer.setPlaying(player.isPlaying());
-//                    managedPlayer.setOverseas(player.isOverseas());
-//                    managedPlayer.setBackup(player.isBackup());
-//                    managedPlayers.add(playerRepository.save(managedPlayer)); // Save the updated player
-//                } else {
-//                    // Handle case where player with ID does not exist
-//                    managedPlayers.add(playerRepository.save(player));
-//                }
-//            } else {
-//                // New player, so we persist
-//                managedPlayers.add(playerRepository.save(player));
-//            }
-//        }
-//        return managedPlayers;
-//    }
-
-    private List<PlayerEntity> saveOrUpdatePlayers(List<PlayerEntity> players) {
-        List<PlayerEntity> managedPlayers = new ArrayList<>();
-        for (PlayerEntity player : players) {
-            if (player.getId() != null) {
-                // If player ID exists, fetch the existing player and update it
-                PlayerEntity managedPlayer = playerRepository.findById(player.getId()).orElse(null);
-                if (managedPlayer != null) {
-                    // Update existing player details
-                    managedPlayer.setName(player.getName());
-                    managedPlayer.setEmail(player.getEmail());
-                    managedPlayer.setUsername(player.getUsername());
-                    managedPlayer.setDateOfBirth(player.getDateOfBirth());
-                    managedPlayer.setSpecialization(player.getSpecialization());
-                    managedPlayer.setGender(player.getGender());
-                    managedPlayer.setCountry(player.getCountry());
-                    managedPlayer.setProfilePicture(player.getProfilePicture());
-                    managedPlayer.setTeamid(player.getTeamid());
-                    managedPlayer.setRole(player.getRole());
-                    managedPlayer.setPlaying(player.isPlaying());
-                    managedPlayer.setOverseas(player.isOverseas());
-                    managedPlayer.setBackup(player.isBackup());
-                    managedPlayers.add(playerRepository.save(managedPlayer));
-                } else {
-                    // Handle case where player with ID does not exist
-                    managedPlayers.add(playerRepository.save(player));
-                }
-            } else {
-                // New player, so we persist
-                managedPlayers.add(playerRepository.save(player));
-            }
-        }
-        return managedPlayers;
+    private List<PlayerEntity> savePlayerOrUpdatePlayers(List<PlayerEntity> players) {
+        return players.stream()
+                .map(player -> player.getId() != null ? updateExistingPlayer(player) : playerRepository.save(player))
+                .collect(Collectors.toList());
     }
 
+    private PlayerEntity updateExistingPlayer(PlayerEntity player) {
+        return playerRepository.findById(player.getId())
+                .map(existingPlayer -> updatePlayerDetails(existingPlayer, player))
+                .orElse(playerRepository.save(player));
+    }
 
-    private List<PlayerEntity> convertPlayerDTOsToEntities(List<PlayerDTO> playerDTOs) throws Exception {
-        List<PlayerEntity> players = new ArrayList<>();
-        for (PlayerDTO dto : playerDTOs) {
+    private PlayerEntity updatePlayerDetails(PlayerEntity existingPlayer, PlayerEntity newPlayer) {
+        existingPlayer.setName(newPlayer.getName());
+        existingPlayer.setEmail(newPlayer.getEmail());
+        existingPlayer.setUsername(newPlayer.getUsername());
+        existingPlayer.setDateOfBirth(newPlayer.getDateOfBirth());
+        existingPlayer.setSpecialization(newPlayer.getSpecialization());
+        existingPlayer.setGender(newPlayer.getGender());
+        existingPlayer.setCountry(newPlayer.getCountry());
+        existingPlayer.setProfilePicture(newPlayer.getProfilePicture());
+        existingPlayer.setTeamid(newPlayer.getTeamid());
+        existingPlayer.setPlaying(newPlayer.isPlaying());
+        existingPlayer.setOverseas(newPlayer.isOverseas());
+        existingPlayer.setBackup(newPlayer.isBackup());
+        return playerRepository.save(existingPlayer);
+    }
+
+    private List<PlayerEntity> convertPlayerDtoToEntity(List<PlayerDTO> playerDTOs) {
+        return playerDTOs.stream().map(dto -> {
             PlayerEntity player = new PlayerEntity();
-            player.setId(dto.getId()); // Set the ID which is used for detecting if it's a detached entity
+            player.setId(dto.getId());
             player.setName(dto.getName());
             player.setEmail(dto.getEmail());
             player.setUsername(dto.getUsername());
@@ -180,45 +92,35 @@ public class TeamServiceImpl implements TeamService {
             player.setGender(dto.getGender());
             player.setCountry(dto.getCountry());
             player.setProfilePicture(dto.getProfilePicture());
-            player.setRole(ERole.valueOf(dto.getRole()));
             player.setPlaying(dto.getPlaying());
             player.setOverseas(dto.getOverseas());
             player.setBackup(dto.getBackup());
-            players.add(player);
-        }
-        return players;
+            return player;
+        }).collect(Collectors.toList());
     }
 
-    private void validatePlayers(List<PlayerEntity> players, String teamCountry) throws Exception {
-        if (players.size() != 15) {
-            throw new Exception("A team must consist of exactly 15 players.");
-        }
-        // Count specializations
-        long bowlers = players.stream().filter(p -> "Bowler".equalsIgnoreCase(p.getSpecialization())).count();
-        long batters = players.stream().filter(p -> "Batter".equalsIgnoreCase(p.getSpecialization().toUpperCase())).count();
-        long allRounders = players.stream().filter(p -> "All-Rounder".equalsIgnoreCase(p.getSpecialization().toUpperCase())).count();
+    private void validateTeamPlayers(List<PlayerEntity> players, String teamCountry) throws Exception {
+        if (players.size() != 15) throw new Exception("A team must consist of exactly 15 players.");
 
-        if (bowlers != 5 || batters != 5 || allRounders != 5) {
+        long bowlers = countBySpecialization(players, "Bowler");
+        long batters = countBySpecialization(players, "Batter");
+        long allRounders = countBySpecialization(players, "All-Rounder");
+
+        if (bowlers != 5 || batters != 5 || allRounders != 5)
             throw new Exception("Team must have 5 Bowlers, 5 Batters, and 5 All-Rounders.");
-        }
 
-        // Check country rules
-        long sameCountryCount = players.stream().filter(p -> teamCountry.equalsIgnoreCase(p.getCountry())).count();
-        if (sameCountryCount < 10) {
-            throw new Exception("The team must have at least 10 players from the same country as the team's country.");
-        }
+        long localPlayers = players.stream().filter(p -> teamCountry.equalsIgnoreCase(p.getCountry())).count();
+        if (localPlayers < 10) throw new Exception("At least 10 players must be from the team's country.");
+        if (players.size() - localPlayers < 5) throw new Exception("At least 5 players must be from other countries.");
+    }
 
-        // Ensure 5 players from other countries
-        long otherCountriesCount = players.size() - sameCountryCount;
-        if (otherCountriesCount < 5) {
-            throw new Exception("The team must have at least 5 players from countries other than the team's country.");
-        }
+    private long countBySpecialization(List<PlayerEntity> players, String specialization) {
+        return players.stream().filter(p -> specialization.equalsIgnoreCase(p.getSpecialization())).count();
     }
 
     @Override
     public TeamEntity getTeamById(Long id) {
-        return teamRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Team not found with id: " + id));
+        return teamRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Team not found with id: " + id));
     }
 
     @Override
@@ -231,25 +133,22 @@ public class TeamServiceImpl implements TeamService {
         TeamEntity existingTeam = teamRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Team not found with id: " + id));
 
-        existingTeam.setName(teamEntity.getName());
-        existingTeam.setCountry(teamEntity.getCountry());
-        existingTeam.setTeamCaptain(teamEntity.getTeamCaptain());
-        existingTeam.setOwner(teamEntity.getOwner());
-        existingTeam.setIcon(teamEntity.getIcon());
-        existingTeam.setTotalPoints(teamEntity.getTotalPoints());
-        existingTeam.setLogo(teamEntity.getLogo());
+        updateTeamDetails(existingTeam, teamEntity);
 
-
-        // If provided, update coach ID
-        if (teamEntity.getCoachId() != null) {
-            existingTeam.setCoachId(teamEntity.getCoachId());
-        }
-
-        // Validate and update players
         List<PlayerEntity> updatedPlayers = fetchExistingPlayers(teamEntity.getPlayers());
         existingTeam.setPlayers(updatedPlayers);
 
         return teamRepository.save(existingTeam);
+    }
+
+    private void updateTeamDetails(TeamEntity existingTeam, TeamEntity newTeam) {
+        existingTeam.setName(newTeam.getName());
+        existingTeam.setCountry(newTeam.getCountry());
+        existingTeam.setTeamCaptain(newTeam.getTeamCaptain());
+        existingTeam.setOwner(newTeam.getOwner());
+        existingTeam.setIcon(newTeam.getIcon());
+        existingTeam.setTotalPoints(newTeam.getTotalPoints());
+        existingTeam.setCoachId(newTeam.getCoachId());
     }
 
     @Override
@@ -261,55 +160,18 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public void addPlayerToTeam(Long teamId, Long playerId) {
-        TeamEntity teamEntity = teamRepository.findById(teamId)
+        TeamEntity team = teamRepository.findById(teamId)
                 .orElseThrow(() -> new EntityNotFoundException("Team not found with id: " + teamId));
 
-        PlayerEntity playerEntity = playerRepository.findById(playerId)
+        PlayerEntity player = playerRepository.findById(playerId)
                 .orElseThrow(() -> new EntityNotFoundException("Player not found with id: " + playerId));
 
-        // Check if the player is already part of a team
-        if (playerEntity.getTeamid() != null) {
-            throw new IllegalArgumentException("Player is already assigned to a team.");
-        }
+        if (player.getTeamid() != null) throw new IllegalArgumentException("Player is already assigned to a team.");
 
-        playerEntity.setTeamid(teamEntity.getId()); // Assign player to this team
-        teamEntity.getPlayers().add(playerEntity); // Add the player to the team's list
+        player.setTeamid(team.getId());
+        team.getPlayers().add(player);
 
-        teamRepository.save(teamEntity); // Save the changes
-    }
-
-    @Override
-    public void validateTeamEntity(TeamEntity teamEntity) {
-        List<PlayerEntity> players = teamEntity.getPlayers();
-
-        // Validate the number of players
-        if (players == null || players.size() != 15) {
-            throw new IllegalArgumentException("A team must have exactly 15 players.");
-        }
-
-//        long overseasCount = players.stream().filter(PlayerEntity::isOverseas).count();
-//        if (overseasCount != 5) {
-//            throw new IllegalArgumentException("A team must have exactly 5 overseas players.");
-//        }
-
-//        List<PlayerEntity> playingPlayers = players.stream().filter(PlayerEntity::isPlaying).collect(Collectors.toList());
-//        if (playingPlayers.size() != 11) {
-//            throw new IllegalArgumentException("A team must have exactly 11 playing players.");
-//        }
-//
-//        long overseasPlayingCount = playingPlayers.stream().filter(PlayerEntity::isOverseas).count();
-//        if (overseasPlayingCount != 3) {
-//            throw new IllegalArgumentException("There must be exactly 3 overseas players in the playing 11.");
-//        }
-//
-//        // Ensure there are exactly 4 backup players
-//        List<PlayerEntity> backupPlayers = players.stream().filter(PlayerEntity::isBackup).collect(Collectors.toList());
-//        if (backupPlayers.size() != 4) {
-//            throw new IllegalArgumentException("There must be exactly 4 backup players.");
-//        }
-
-        teamEntity.setPlayers(players);
-        teamRepository.save(teamEntity);
+        teamRepository.save(team);
     }
 
     @Override
@@ -318,16 +180,7 @@ public class TeamServiceImpl implements TeamService {
     }
 
     private List<PlayerEntity> fetchExistingPlayers(List<PlayerEntity> players) {
-        List<Long> playerIds = players.stream()
-                .map(PlayerEntity::getId)
-                .collect(Collectors.toList());
-
+        List<Long> playerIds = players.stream().map(PlayerEntity::getId).collect(Collectors.toList());
         return playerRepository.findAllById(playerIds);
     }
-
-//    @Override
-//    public List<TeamEntity> getTeamsByCoachId(Long coachId) {
-//        return teamRepository.findByCoachId(coachId);
-//    }
-
 }

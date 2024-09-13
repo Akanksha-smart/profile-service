@@ -5,9 +5,6 @@ import com.sam.profilecreation_service.repository.AdminRepository;
 import com.sam.profilecreation_service.repository.CoachRepository;
 import com.sam.profilecreation_service.repository.PlayerRepository;
 import com.sam.profilecreation_service.repository.UserRepository;
-import com.sam.profilecreation_service.service.AdminService;
-import com.sam.profilecreation_service.service.CoachService;
-import com.sam.profilecreation_service.service.PlayerService;
 import com.sam.profilecreation_service.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,16 +23,6 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private CoachRepository coachRepository;
-
-    @Autowired
-    private PlayerService playerService;
-
-    @Autowired
-    private CoachService coachService;
-
-    @Autowired
-    private AdminService adminService;
-
 
     
 

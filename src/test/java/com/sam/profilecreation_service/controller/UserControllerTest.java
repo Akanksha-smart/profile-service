@@ -45,15 +45,11 @@ public class UserControllerTest {
         userEntity.setUsername("user");
         userEntity.setEmail("user@example.com");
         userEntity.setPassword("password");
-
-        // Mock service behavior
         when(userService.signup(any(UserEntity.class))).thenReturn(userEntity);
 
-        // Setup JSON body for request
         ObjectMapper objectMapper = new ObjectMapper();
         String requestBody = objectMapper.writeValueAsString(userEntity);
 
-        // Perform the test for successful registration
         mockMvc.perform(post("/api/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
@@ -69,14 +65,11 @@ public class UserControllerTest {
         userEntity.setEmail("user@example.com");
         userEntity.setPassword("password");
 
-        // Mock service to throw exception for existing email
         when(userService.signup(any(UserEntity.class))).thenThrow(new RuntimeException("Email already in use"));
 
-        // Setup JSON body for request
         ObjectMapper objectMapper = new ObjectMapper();
         String requestBody = objectMapper.writeValueAsString(userEntity);
 
-        // Perform the test for email already exists scenario
         mockMvc.perform(post("/api/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
@@ -86,24 +79,19 @@ public class UserControllerTest {
 
     @Test
     void testLoginUser_Success() throws Exception {
-        // Setup login request data
         Map<String, String> loginRequest = new HashMap<>();
         loginRequest.put("username", "user");
         loginRequest.put("password", "password");
 
-        // Setup a user entity to return after successful login
         UserEntity userEntity = new UserEntity();
         userEntity.setUsername("user");
         userEntity.setPassword("password");
 
-        // Mock service behavior
         when(userService.login(anyString(), anyString())).thenReturn(userEntity);
 
-        // Setup JSON body for request
         ObjectMapper objectMapper = new ObjectMapper();
         String requestBody = objectMapper.writeValueAsString(loginRequest);
 
-        // Perform the test for successful login
         mockMvc.perform(post("/api/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
@@ -119,14 +107,11 @@ public class UserControllerTest {
         loginRequest.put("username", "user");
         loginRequest.put("password", "wrongPassword");
 
-        // Mock service to throw exception for invalid credentials
         when(userService.login(anyString(), anyString())).thenThrow(new RuntimeException("Invalid username or password"));
 
-        // Setup JSON body for request
         ObjectMapper objectMapper = new ObjectMapper();
         String requestBody = objectMapper.writeValueAsString(loginRequest);
 
-        // Perform the test for invalid credentials scenario
         mockMvc.perform(post("/api/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))

@@ -1,7 +1,6 @@
 package com.sam.profilecreation_service.controller;
 
 import com.sam.profilecreation_service.dto.TeamRegisterDTO;
-import com.sam.profilecreation_service.entity.CoachEntity;
 import com.sam.profilecreation_service.entity.TeamEntity;
 import com.sam.profilecreation_service.entity.PlayerEntity;
 import com.sam.profilecreation_service.service.TeamService;
@@ -92,16 +91,4 @@ public class TeamController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while adding the player to the team.");
         }
     }
-//
-//    @PostMapping("/{teamId}/coach")
-//    public ResponseEntity<String> addCoachToTeam(@PathVariable("teamId") Long teamId, @RequestBody CoachEntity coachEntity) {
-//        try {
-//            teamService.addCoachToTeam(teamId, coachEntity.getCoachId());
-//            return new ResponseEntity<>("Coach added to team successfully", HttpStatus.OK);
-//        } catch (EntityNotFoundException ex) {
-//            return new ResponseEntity<>("Team not found with ID: " + teamId, HttpStatus.NOT_FOUND);
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while adding the coach to the team.");
-//        }
-//    }
 }

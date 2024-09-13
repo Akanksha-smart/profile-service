@@ -10,10 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -113,30 +109,6 @@ public class TeamControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-//    @Test
-//    public void testUpdateTeam() throws Exception {
-//        // Create a sample team entity to be updated
-//        TeamEntity teamEntity = new TeamEntity();
-//        teamEntity.setId(1L);
-//        teamEntity.setName("Updated Team Name"); // Add other necessary fields as per your entity
-//
-//        // Mocking the service layer's updateTeam method
-//        doNothing().when(teamService).updateTeam(any(TeamEntity.class), anyLong());
-//
-//        // Convert teamEntity to JSON
-//        String teamEntityJson = "{"
-//                + "\"id\": 1,"
-//                + "\"name\": \"Updated Team Name\""
-//                + "}";
-//
-//        // Perform the PUT request
-//        mockMvc.perform(put("/api/teams/update/1")
-//                        .contentType("application/json")
-//                        .content(teamEntityJson))
-//                .andExpect(status().isOk())
-//                .andExpect(content().string("Team updated successfully"));
-//    }
-
     @Test
     public void testUpdateTeamNotFound() throws Exception {
         doThrow(new EntityNotFoundException("Team not found")).when(teamService).updateTeam(any(TeamEntity.class), anyLong());
@@ -193,39 +165,4 @@ public class TeamControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("Team not found with ID: 1"));
     }
-
-// Uncomment this test if you implement the addCoachToTeam endpoint
-    /*
-    @Test
-    public void testAddCoachToTeam() throws Exception {
-        doNothing().when(teamService).addCoachToTeam(anyLong(), anyLong());
-
-        CoachEntity coachEntity = new CoachEntity();
-        coachEntity.setCoachId(1L);
-
-        mockMvc.perform(post("/api/teams/1/coach")
-                .contentType("application/json")
-                .content("{\"coachId\":1}"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("Coach added to team successfully"));
-    }
-
-    @Test
-    public void testAddCoachToTeamNotFound() throws Exception {
-        doThrow(new EntityNotFoundException("Team not found")).when(teamService).addCoachToTeam(anyLong(), anyLong());
-
-        CoachEntity coachEntity = new CoachEntity();
-        coachEntity.setCoachId(1L);
-
-        mockMvc.perform(post("/api/teams/1/coach")
-                .contentType("application/json")
-                .content("{\"coachId\":1}"))
-                .andExpect(status().isNotFound())
-                .andExpect(content().string("Team not found with ID: 1"));
-    }
-     */
-
-
-
-
 }
