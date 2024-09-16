@@ -4,11 +4,13 @@ import com.sam.profilecreation_service.dto.PlayerDTO;
 import com.sam.profilecreation_service.dto.TeamRegisterDTO;
 import com.sam.profilecreation_service.entity.PlayerEntity;
 import com.sam.profilecreation_service.entity.TeamEntity;
+import com.sam.profilecreation_service.exception.TeamNotFoundException;
 import com.sam.profilecreation_service.repository.PlayerRepository;
 import com.sam.profilecreation_service.repository.TeamRepository;
 import com.sam.profilecreation_service.service.TeamService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -176,8 +178,22 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public Integer getTeamsByCoachName(String name) {
-        return teamRepository.findByCoachName(name);
+        try {
+            Integer teamCount = teamRepository.findByCoachName(name);
+
+            if (teamCount == null) {
+                throw new TeamNotFoundException("No teams found for coach: " + name);
+            }
+
+            return teamCount;
+        } catch (TeamNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+
+            throw new ServiceException("An error occurred while fetching teams for coach: " + name, e);
+        }
     }
+
 
     private List<PlayerEntity> fetchExistingPlayers(List<PlayerEntity> players) {
         List<Long> playerIds = players.stream().map(PlayerEntity::getId).collect(Collectors.toList());

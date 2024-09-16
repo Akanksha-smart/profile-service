@@ -13,7 +13,6 @@ This web application manages a cricket tournament with features like team manage
 ## Tech Stack
 - Backend**: Java 17+, Spring Boot
 - Database: MySQL
-- Messaging/Notifications: OpenFeign, RestTemplate
 - Version Control: GitHub
 - Project Management: Trello
 

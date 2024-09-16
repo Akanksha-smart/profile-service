@@ -3,6 +3,7 @@ package com.sam.profilecreation_service.controller;
 import com.sam.profilecreation_service.dto.TeamRegisterDTO;
 import com.sam.profilecreation_service.entity.TeamEntity;
 import com.sam.profilecreation_service.entity.PlayerEntity;
+import com.sam.profilecreation_service.exception.TeamNotFoundException;
 import com.sam.profilecreation_service.service.TeamService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +20,6 @@ public class TeamController {
 
     @Autowired
     private TeamService teamService;
-
-
-
 
     @PostMapping("/create")
     public ResponseEntity<?> createTeam(@RequestBody TeamRegisterDTO teamRegisterDTO) {
@@ -50,15 +48,23 @@ public class TeamController {
     }
 
     @GetMapping("/coach/{name}")
-    public ResponseEntity<?> getTeamByCoachName(@PathVariable String  name) {
-        Integer coachId  = teamService.getTeamsByCoachName(name);
-        if (coachId== null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND); // If no teams found for the coach
+    public ResponseEntity<?> getTeamByCoachName(@PathVariable String name) {
+        try {
+            Integer coachId = teamService.getTeamsByCoachName(name);
+
+            if (coachId == null) {
+                throw new TeamNotFoundException("No teams found for the coach: " + name);
+            }
+            return new ResponseEntity<>(coachId, HttpStatus.OK);
+
+        } catch (TeamNotFoundException ex) {
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Exception ex) {
+            return new ResponseEntity<>("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<>(coachId, HttpStatus.OK);
     }
 
-    @PutMapping("/manage-team/{id}")
+    @PutMapping("/manageTeam/{id}")
     public ResponseEntity<String> updateTeam(@RequestBody TeamEntity teamEntity, @PathVariable Long id) {
         try {
             teamService.updateTeam(teamEntity, id);

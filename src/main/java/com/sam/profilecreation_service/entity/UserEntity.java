@@ -28,7 +28,7 @@ public class UserEntity {
     @Column(nullable = false)
     private String username;
 
-    @Column(nullable = false , unique = true)
+    @Column(nullable = false)
     private String email;
 
     @Column(nullable = false)
