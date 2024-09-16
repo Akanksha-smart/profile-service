@@ -58,7 +58,7 @@ public class TeamController {
         return new ResponseEntity<>(coachId, HttpStatus.OK);
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/manage-team/{id}")
     public ResponseEntity<String> updateTeam(@RequestBody TeamEntity teamEntity, @PathVariable Long id) {
         try {
             teamService.updateTeam(teamEntity, id);
